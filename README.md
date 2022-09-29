@@ -6,7 +6,7 @@
 ## 監視ツール
 監視において使用するOSS(オープンソースソフトウェア)とAWSサービスについて説明します。<br><br>
 
-<img src="image/Prometheus.png" width="240" /><br>
+<img src="image/Prometheus.png" width="240"/>　　<img src="image/AMP.png" width="60" /><br><br>
 `Prometheus`はオープンソースのモニタリングツールで、CNCF(Cloud Native Computing Foundation)のgraduatedプロジェクトです。<br>
 >CNCFとはクラウドネイティブコンピューティング技術を推進する非営利団体で、CNCFのGraduatedプロジェクトはCNCFにより「成熟した」と認められたプロジェクトのことです。有名な例だとKubernetesが挙げられます。<br>
 
@@ -17,15 +17,16 @@ Prometheus Exporterからデータを収集し、PromQLという専用クエリ�
 ※`AMP`ではストレージにCNCFのIncubatingプロジェクトである`Cortex`が使用されていますが、`AMP`を使用する上ではストレージを意識する必要がないので、`Cortex`に関しても特に意識する必要はありません。<br>
 
 
-<img src="image/Grafana.png" width="200" /><br>
+<img src="image/Grafana.png" width="200" />　　<img src="image/AMG.png" width="60" /><br><br>
 `Grafana`はオープンソースのデータ可視化ツールで、可視化に特化しているため、他プロダクトが独自で用意しているダッシュボードよりも時系列グラフの可視化自由度が高いです。<br>
 また、データソースとしてさまざまなデータを可視化できます。<br>
 デメリットとしてはストレージ設計や構築、運用管理にコストがかかる等があげられますが、
 AWSのマネージドサービスである`Amazon Managed Grafana(AMG)`を利用することでデメリットを解決できます。<br>
 
-<img src="image/OpenSearch.png" width="200" /><br>
+<img src="image/OpenSearch.png" width="200" />　　<img src="image/OpenSearchService.png" width="60" /><br><br>
 `OpenSearch`は`ElasticSearch`と`Kibana`から派生したオープンソースのツールで、AWSによって開発されました。<br>
-様々な形式のデータの収集・可視化が可能です。<br><br>
+様々な形式のデータの収集・可視化が可能です。<br>
+AWSのマネージメントサービスである`Amazon OpenSearch Service`を使用します。<br>
 <img src="image/ElasticSearch.jpg" height="70" />　　<img src="image/Kibana.png" height="70" /><br>
 ※`ElasticSearch`はElastic社によって開発されたオープンソースの全文検索エンジンでログの収集によく利用されています。<br>
 また、`Kibana`はElastic社によって開発された`ElasticSearch`の可視化ツールです。<br><br>
@@ -60,11 +61,11 @@ S3内のデータをSQLを利用して分析できるAWSのサービスです。
 `FluentBit`は`Fluentd`の軽量版。<br>
 ECSではこちらを使用します。<br>
 
-<img src="image/OpenTelemetry.png" width="200" /><br>
+<img src="image/OpenTelemetry.png" width="190"/>　　<img src="image/ADOT.png" width="60" /><br><br>
 `OpenTelemetry`はクラウドネイティブアプリケーションとインフラストラクチャから「メトリクス」「トレース」のキャプチャと成形、エクスポートをするオープンソースのツールで、CNCFのIncubatingプロジェクトです。<br>
 `AWS Disto for OpenTelemetry(ADOT)`というAWSサポートのディストリビューションがあり、エクスポート先にAWSのサービスがサポートされています。<br>
 
-<img src="image/PrometheusLogo.png" width="70" /><br>
+<img src="image/PrometheusLogo.png" width="60" /><br>
 **Prometheus Exporter**<br>
 `Prometheus`用のメトリクスを収集するツールです。<br>
 様々な種類のExporterが用意されており、以下がその例です。<br>
@@ -87,7 +88,7 @@ ECSではこちらを使用します。<br>
 `Systems Manager`用のエージェントです。<br>
 インストールすることで、サーバーに対して`Systems Manager`の様々な機能が利用できます。<br>
 
-<img src="image/Ansible.png" width="130" /><br>
+<img src="image/Ansible.png" width="200" /><br>
 `Ansible`は多数のサーバーや複数のクラウドインフラを統一的に制御できるオープンソースの構成管理ツールです。<br>
 「Playbook」というファイルを利用して、サーバーに接続することなく、インストールや設定ファイルの更新等実行できます。<br>
 `Systems Manager`のRun Commandという機能で「Playbook」が利用でき、ネット上で様々な「Playbook」を参照できるので活用しやすいです。<br>
@@ -270,8 +271,8 @@ AWS内のリソースは基本的に`CloudFormation(CFn)`で構築し、`CodeCom
 <img src="image/構築.drawio.png" width="500" /><br>
 
 `CloudFormation(CFn)`のテンプレートを`CodeCommit`にコミットすると、
-`CodePipline`により`CodeBuild`でテストされ、`CloudFormation`が実行されます。<br>
-<br>
+`CodePipline`により`CodeBuild`でテストされ、`CloudFormation`が実行されます。<br><br>
+<img src="image/SAM.jpg" height="70" /><br>
 同様に`Lambda`のコードを`CodeCommit`にコミットすると、
 `CodePipline`により`CodeBuild`でテストされ、
 `Serverless Application Model(SAM)`によって`CloudFormation`が実行されます。
