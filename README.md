@@ -126,7 +126,7 @@ Standardは無料でAdvancedは有料。Advancedはより強力に攻撃から�
 <img src="image/NetworkFirewall.png" width="60" /><br>
 **Network Firewall**<br>
 VPC向けのファイアーウォールです。<br>
-Network ACLやSecurity Groupに比べてより高度なファイアウォールを実装できます。<br>
+`Network ACL`や`Security Group`に比べてより高度なファイアウォールを実装できます。<br>
 
 <img src="image/NetworkACL.png" width="60" /><br>
 **Network ACL**<br>
@@ -137,7 +137,7 @@ Network ACLやSecurity Groupに比べてより高度なファイアウォール�
 
 <img src="image/FirewallManager.png" width="60" /><br>
 **Firewall Manager**<br>
-「 WAF 」 「 Shield 」 「 Network Firewall 」 「 Route53 Resolver DNS Firewall 」「 Network ACL 」「 Security Group 」を一元化します。<br>
+`WAF` `Shield` `Network Firewall` `Network ACL` `Security Group`を一元化します。<br>
 
 <img src="image/KMS.png" width="60" /><br>
 **KMS**<br>
@@ -164,7 +164,7 @@ VPC内のIPトラフィック状況をログとして保存できるVPCの機能
 
 <img src="image/GuardDuty.png" width="60" /><br>
 **GuardDuty**<br>
-「 CloudTrail 」や「 VPC Flow Log 」からAWS上で発生する不正やセキュリティイベントなどの脅威を検出するサービスです。<br>
+`CloudTrail`や`VPC Flow Log`からAWS上で発生する不正やセキュリティイベントなどの脅威を検出するサービスです。<br>
 
 <img src="image/Inspector.png" width="60" /><br>
 **Inspector**<br>
@@ -176,7 +176,7 @@ S3バケット上にある個人情報等の機密データを自動的に発見
 
 <img src="image/SecurityHub.png" width="60" /><br>
 **Security Hub**<br>
-「 GuardDuty 」「 Inspector 」「 Detective 」「 Macie 」「 IAM Access Analyzer 」「 Config 」の検知内容を集約します。<br>
+`GuardDuty` `Inspector` `Detective` `Macie` `IAM Access Analyzer` `Config`の検知内容を集約します。<br>
 また、べストプラクティスや業界標準に基づいた、継続的なAWS環境の自動チェックも行います。<br>
 
 <img src="image/TrustedAdvisor.png" width="60" /><br>
@@ -186,7 +186,7 @@ AWSのベストプラクティスの情報に基づいて、今設定されて�
 ### **調査**<br>
 <img src="image/Detective.png" width="60" /><br>
 **Detective**<br>
-「 VPC Flow Log 」「 GuardDuty 」「 CloudTrail 」から、
+`VPC Flow Log` `GuardDuty` `CloudTrail`から、
 潜在的なセキュリティ問題や不審なアクティビティを分析、調査<br>
 
 ### ログの可視化
