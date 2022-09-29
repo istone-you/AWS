@@ -1,35 +1,35 @@
 # AWSの運用構成
 
 ## 全体図
-![](監視運用.drawio.png)
+![](image/監視運用.drawio.png)
 運用において使用するAWSサービスの全体図です。複雑で分かりづらいと思うので分けて説明します。
 ## 監視ツール
 監視において使用するOSS(オープンソースソフトウェア)とAWSサービスについて説明します。<br><br>
 **Prometheus**<br><br>
-<img src="Prometheus.png" width="150" /><br>
+<img src="image/Prometheus.png" width="150" /><br>
 オープンソースのモニタリングツールで、CNCF(Cloud Native Computing Foundation)のgraduatedプロジェクトです。<br>
 >CNCFとはクラウドネイティブコンピューティング技術を推進する非営利団体で、CNCFのGraduatedプロジェクトはCNCFにより「成熟した」と認められたプロジェクトのことです。有名な例だとKubernetesが挙げられます。<br>
 
 Prometheus Exporterからデータを収集し、PromQLという専用クエリ言語でメトリクスデータを柔軟に表示できます。<br>
 `Grafana`が`Prometheus`の可視化ツールとしてよく利用されています。<br>
 デメリットとしてはストレージ設計や構築、運用管理にコストがかかったり、障害時の調査や復旧が難しい等があげられますが、AWSのマネージドサービスである`Amazon Managed Service for Prometheus(AMP)`を利用することでデメリットを解決できます。<br><br>
-　　<img src="Cortex.png" width="60" /><br>
+　　<img src="image/Cortex.png" width="60" /><br>
 ※`AMP`ではストレージにCNCFのIncubatingプロジェクトである`Cortex`が使用されていますが、`AMP`を使用する上ではストレージを意識する必要がないので、`Cortex`に関しても特に意識する必要はありません。<br>
 
 
 
 **Grafana**<br><br>
-<img src="Grafana.png" width="130" /><br>
+<img src="image/Grafana.png" width="130" /><br>
 オープンソースのデータ可視化ツールで、可視化に特化しているため、他プロダクトが独自で用意しているダッシュボードよりも時系列グラフの可視化自由度が高いです。<br>
 また、データソースとしてさまざまなデータを可視化できます。<br>
 デメリットとしてはストレージ設計や構築、運用管理にコストがかかる等があげられますが、
 AWSのマネージドサービスである`Amazon Managed Grafana(AMG)`を利用することでデメリットを解決できます。<br>
 
 **OpenSearch**<br><br>
-<img src="OpenSearch.png" width="200" /><br>
+<img src="image/OpenSearch.png" width="200" /><br>
 `ElasticSearch`と`Kibana`から派生したオープンソースのツールで、AWSによって開発されました。<br>
 様々な形式のデータの収集・可視化が可能です。<br><br>
-<img src="ElasticSearch.jpg" width="150" /><img src="kibana.png" width="100" /><br>
+<img src="image/ElasticSearch.jpg" width="150" /><img src="image/kibana.png" width="100" /><br>
 ※`ElasticSearch`はElastic社によって開発されたオープンソースの全文検索エンジンでログの収集によく利用されています。<br>
 また、`Kibana`はElastic社によって開発された`ElasticSearch`の可視化ツールです。<br>
 
@@ -43,7 +43,7 @@ S3内のデータをSQLを利用して分析できるAWSのサービスです。
 監視項目によってツールやサービスが分かれていると面倒なので`Grafana`のダッシュボードで出来るだけすべてを監視できるようにしています。<br>
 ただ`Grafana`ですべてが監視出来るわけではないので、詳細を知りたい際には各々のツールやサービスを確認することになると思います。<br>
 ダッシュボードが確認できるツール・サービスについては全体図にてダッシュボードマークをつけています。<br>
-![](Grafana.drawio.png)
+![](image/Grafana.drawio.png)
 `Prometheus`・`CloudWatch`・`Zabbix`からメトリクス、<br>
 `OpenSearch`からログ(＋セキュリティ関連のログ)、<br>
 `X-Ray`からトレース、<br>
@@ -51,20 +51,20 @@ S3内のデータをSQLを利用して分析できるAWSのサービスです。
 
 ## サーバー
 サーバーにインストールするツールについて説明します。<br>
-<img src="サーバー.drawio.png" width="350" /><br>
+<img src="image/サーバー.drawio.png" width="350" /><br>
 
 **Fluentd**<br>
-<img src="Fluentd.png" width="150" /><br>
+<img src="image/Fluentd.png" width="150" /><br>
 アプリケーションなどからログデータを収集し、フィルタリングして複数の宛先に送信できるオープンソースのツールで、CNCFのgraduatedプロジェクトです。<br>
 出力先として様々なサービスが用意されており、数百のプラグインが利用可能です。<br>
 
 **FluentBit**<br>
-<img src="FluentBit.png" width="180" /><br>
+<img src="image/FluentBit.png" width="180" /><br>
 Fluentd の軽量版。<br>
 ECSではこちらを使用します。<br>
 
 **OpenTelemetry**<br>
-<img src="OpenTelemetry.png" width="130" /><br>
+<img src="image/OpenTelemetry.png" width="130" /><br>
 クラウドネイティブアプリケーションとインフラストラクチャから「メトリクス」「トレース」のキャプチャと成形、エクスポートをするオープンソースのツールで、CNCFのIncubatingプロジェクトです。<br>
 `AWS Disto for OpenTelemetry(ADOT)`というAWSサポートのディストリビューションがあり、エクスポート先にAWSのサービスがサポートされています。<br>
 
@@ -89,7 +89,7 @@ Prometheus用のメトリクスを収集するツールです。<br>
 インストールすることで、サーバーに対して`Systems Manager`の様々な機能が利用できます。<br>
 
 **Ansible**<br>
-<img src="Ansible.png" width="130" /><br>
+<img src="image/Ansible.png" width="130" /><br>
 多数のサーバーや複数のクラウドインフラを統一的に制御できるオープンソースの構成管理ツールです。<br>
 「Playbook」というファイルを利用して、サーバーに接続することなく、インストールや設定ファイルの更新等実行できます。<br>
 `Systems Manager`のRun Commandという機能で「Playbook」が利用でき、ネット上で様々な「Playbook」を参照できるので活用しやすいです。<br>
@@ -103,15 +103,15 @@ Prometheus用のメトリクスを収集するツールです。<br>
 ※ここで使用する`Lambda`は[SIEM on Amazon OpenSearch Service](https://github.com/aws-samples/siem-on-amazon-opensearch-service)を使用しています。<br>
 - トレースは`OpenTelemetry`のSDKをアプリに導入することで、アプリから取得できるようになり、`OpenTelemetry`にて`X-Ray`用のデータに成形後、`X-Ray`に送信・可視化し、`Grafana`に一元化します。<br>
 ### EC2の監視
-![](EC2監視.drawio.png)<br>
+![](image/EC2監視.drawio.png)<br>
 ### ECSの監視
-![](ECS監視.drawio.png)<br>
+![](image/ECS監視.drawio.png)<br>
 ECSにおいては`Fluentd`よりも`FluentBit`の利用が推奨されているため、`FluentBit`を使用します。<br>
 ECSにて用意されている`FireLens`というログドライバーを使用することで、自動で`FluentBit`のサイドカーコンテナが用意されます。
 ## セキュリティ
 セキュリティに関しては以下のようにAWS内で様々なサービスが用意されています。<br>
 これらも可視化して監視できるようにしています。<br><br>
-![](セキュリティ.drawio.png)<br>
+![](image/セキュリティ.drawio.png)<br>
 ### **保護**<br>
 **WAF**<br>
 Webアプリケーションファイアウォールです。<br>
@@ -174,18 +174,18 @@ AWSのベストプラクティスの情報に基づいて、今設定されて�
 潜在的なセキュリティ問題や不審なアクティビティを分析、調査<br>
 
 ### ログの可視化
-![](セキュリティログ.drawio.png)<br>
+![](image/セキュリティログ.drawio.png)<br>
 セキュリティログは`OpenSearch`に集約・可視化、`Grafana`に一元化します。<br>
 
 ## ネットワーク
 ネットワークのメトリクスとログも可視化します。<br>
-<img src="ネットワーク.drawio.png" width="600" /><br>
+<img src="image/ネットワーク.drawio.png" width="600" /><br>
 ネットワークに関するメトリクスは`CloudWatch`で可視化し、`Grafana`に一元化、<br>
 ネットワークに関するログは`OpenSearch`に集約・可視化、`Grafana`に一元化します。<br>
 
 ## コスト管理
 以下のサービスを利用して、コストの監視と最適化を行います<br>
-<img src="コスト管理.drawio.png" width="600" /><br>
+<img src="image/コスト管理.drawio.png" width="600" /><br>
 
 **Cost Explorer**<br>
 AWSコストや使用料を可視化するダッシュボードサービスです。<br>
@@ -204,13 +204,13 @@ AWSのコストやリソースの使用状況を`S3`にアップロードしま�
 
 ## アカウント管理
 `IAM Identity Center`と呼ばれるSingle Sign On（SSO）のサービスでログイン管理を行います。<br>
-<img src="アカウント管理.drawio.png" width="500" /><br>
+<img src="image/アカウント管理.drawio.png" width="500" /><br>
 `IAM Identity Center`では複数のAWSアカウントと、`OpenSearch`、`Grafana`のログインを一元管理出来ます。<br>
 
 ## 運用の自動化
 以下のサービスを利用して、運用を出来るだけ自動化させます。<br>
 これらサービスのメトリクスも`CloudWatch`で取得できるので、自動化が失敗していないかどうか等の監視も行えます。<br>
-<img src="自動化.drawio.png" width="350" /><br>
+<img src="image/自動化.drawio.png" width="350" /><br>
 
 **Lambda**<br>
 コードをサーバーなしで実行できるサービスで、運用においても様々なLambda関数を利用します。<br>
@@ -235,14 +235,14 @@ AWSサービスのバックアップのスケジュール管理やバックア�
 サーバー上で稼働するソフトウェアの一覧を表示したりと、運用に関する複数の機能が利用できます。<br>
 SSM Agentをサーバーに導入することで利用できます。<br><br>
 
-<img src="インベントリ.drawio.png" width="600" /><br>
+<img src="image/インベントリ.drawio.png" width="600" /><br>
 また、`Systems Manager`で取得できるサーバーのインベントリも`Glue`と`Athena`を利用して、`Grafana`で可視化ができます。<br>
 ## 構築
 AWS内のリソースは基本的に`CloudFormation(CFn)`で構築し、`CodeCommit`でバージョン管理します。<br>
 `CloudFormation(CFn)`を利用することで、AWSリソースをコードで管理できるので、現状を把握しやすくなりますし、<br>
 `CodeCommit`を利用することで、変更差分がわかりやすく残るので、作業履歴として利用できます。<br>
 さらに、`CodeBuild`と`CodePipline`を利用して、コミットから構築までを自動化させます。<br>
-<img src="構築.drawio.png" width="500" /><br>
+<img src="image/構築.drawio.png" width="500" /><br>
 
 `CloudFormation(CFn)`のテンプレートを`CodeCommit`にコミットすると、
 `CodePipline`により`CodeBuild`でテストされ、`CloudFormation`が実行されます。<br>
