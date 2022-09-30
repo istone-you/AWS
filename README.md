@@ -152,6 +152,32 @@ ECSではこちらを使用します。<br>
 ECSでは、`OpenTelemetry`がECSのエージェントからコンテナのメトリクスを取得します。<br>
 また、ECSにおいては`Fluentd`よりも`FluentBit`の利用が推奨されているため、`FluentBit`を使用します。<br>
 ECSにて用意されている`FireLens`というログドライバーを使用することで、自動で`FluentBit`のサイドカーコンテナが用意されます。
+
+## **ストレージ**
+<img src="image/S3.png" width="60" /><br>
+**S3**<br>
+AWSのオブジェクトストレージです。<br>
+
+<img src="image/EBS.png" width="60" /><br>
+**EBS**<br>
+`EC2`と組み合わせて使用できる、ブロックストレージです。<br>
+
+<img src="image/FSx.png" width="60" /><br>
+Windows Server 上に構築されたフルマネージド共有ストレージです。<br>
+
+**FSx for Windows File Server**<br>
+
+## **データベース**
+<img src="image/RDS.png" width="60" />　　<img src="image/PostgreSQL.png" width="60" /><br><br>
+**RDS**<br>
+リレーショナルデータベースのマネージドサービスです。<br>
+`PostgreSQL`を使用しています。
+
+<img src="image/MongoDB.jpg" width="65" /><br>
+**MongoDB** on EC2<br>
+ドキュメント指向のNoSQLデータベースです。<br>
+AWSにて`DocumentDB`と呼ばれる`MongoDB`互換のサービスがありますが、`EC2`にて運用するそうです。
+
 ## **セキュリティ**
 セキュリティに関しては以下のようにAWS内で様々なサービスが用意されています。<br>
 これらも可視化して監視できるようにしています。<br><br>
