@@ -23,8 +23,7 @@
 
 ## **全体図**
 ![](image/監視運用.drawio.png)
-運用において使用するAWSサービスの全体図です。複雑で分かりづらいと思うので分けて説明します。<br>
-AWSの基本的なサービスについても簡単に説明します。<br>
+運用において使用するAWSサービスの全体図です。（自分の頭の整理用の側面が強いです。）<br>複雑で分かりづらいかと思うので、細かく分けて説明します。AWSの基本的なサービスについても簡単に説明します。<br>
 ## **監視ツール**
 監視において使用するOSS(オープンソースソフトウェア)とAWSサービスについて説明します。<br><br>
 
@@ -83,8 +82,9 @@ AWSサービスのメトリクスとログを収集・可視化するAWSのサ�
 S3内のデータをSQLを利用して分析できるAWSのサービスです。`Glue`というサービスでS3のデータのテーブルを作成し`Athena`にてSQLでの分析が出来るようにします。
 ### Grafanaによる可視化と一元化
 監視項目によってツールやサービスが分かれていると面倒なので`Grafana`のダッシュボードで出来るだけすべてを監視できるようにしています。<br>
+`Zabbix`のメトリクスも`Grafana`で確認することが可能です。<br>
 ただ`Grafana`ですべてが監視出来るわけではないので、詳細を知りたい際には各々のツールやサービスを確認することになると思います。<br>
-ダッシュボードが確認できるツール・サービスについては全体図にてダッシュボードマークをつけています。<br>
+ダッシュボードで詳細が確認できるツール・サービスについては全体図にてダッシュボードマークをつけています。<br>
 ![](image/Grafana.drawio.png)
 `Prometheus`・`CloudWatch`・`Zabbix`からメトリクス、<br>
 `OpenSearch`からログ(＋セキュリティ関連のログ)、<br>
@@ -92,14 +92,14 @@ S3内のデータをSQLを利用して分析できるAWSのサービスです。
 `Athena`からコストデータとサーバー情報を可視化します。<br>
 
 ## **サーバー**
-サーバーとサーバーにインストールするツールについて説明します。<br>
+AWSの仮想サーバーとサーバーにインストールするツールについて説明します。<br>
 <img src="image/サーバー.drawio.png" width="350" /><br>
 
 ### **仮想サーバー**
 <img src="image/EC2.png" width="60" /><br>
 **EC2**<br>
 
-LinuxやWindowsなどの仮想サーバを作成できるサービスです。<br>
+LinuxやWindowsなどの仮想サーバーを作成できるサービスです。<br>
 <img src="image/ECS.png" width="60" /><br>
 
 **ECS**<br>
@@ -115,12 +115,12 @@ LinuxやWindowsなどの仮想サーバを作成できるサービスです。<b
 <img src="image/Fluentd.png" width="60" /><br>
 **Fluentd**<br>
 `Fluentd`はアプリケーションなどからログデータを収集し、フィルタリングして複数の宛先に送信できるオープンソースのツールで、CNCFのgraduatedプロジェクトです。<br>
-出力先として様々なサービスが用意されており、数百のプラグインが利用可能です。AWSのサービスも出力先として用意されています。<br><br>
+エクスポート先として様々なサービスが用意されており、数百のプラグインが利用可能です。AWSのサービスもエクスポート先としてサポートされています。<br><br>
 
 <img src="image/FluentBit.jpg" width="70" /><br>
 **FluentBit**<br>
 `FluentBit`は`Fluentd`の軽量版。<br>
-ECSではこちらを使用します。<br><br>
+`ECS`ではこちらを使用します。<br><br>
 
 <img src="image/OpenTelemetry.png" width="60"/><br>
 **OpenTelemetry**<br>
@@ -159,7 +159,7 @@ ECSではこちらを使用します。<br><br>
 
 ## **サーバー監視**
 サーバーの監視においてはメトリクス・ログ・トレースの3つの監視が重要になります。<br>
-- メトリクスはPrometheus　Exporterから取得したものを`OpenTelemetry`で`Prometheus`に送信し、`Grafana`で可視化します、<br>
+- メトリクスはPrometheus Exporterから取得したものを`OpenTelemetry`で`Prometheus`に送信し、`Grafana`で可視化します、<br>
 - ログは`Fluentd`からAWSのサービスである`Kinesis Data Firehose`に送信することで、`S3`にリアルタイムストリーミングを行います。<br>
 `S3`から`Lambda`を利用して成形後、`OpenSearch`に送信・可視化し、`Grafana`に一元化します。<br>
 ※ここで使用する`Lambda`は[SIEM on Amazon OpenSearch Service](https://github.com/aws-samples/siem-on-amazon-opensearch-service)を使用しています。<br>
@@ -168,9 +168,9 @@ ECSではこちらを使用します。<br><br>
 ![](image/EC2監視.drawio.png)<br>
 ### ECSの監視
 ![](image/ECS監視.drawio.png)<br>
-ECSでは、`OpenTelemetry`がECSのエージェントからコンテナのメトリクスを取得します。<br>
-また、ECSにおいては`Fluentd`よりも`FluentBit`の利用が推奨されているため、`FluentBit`を使用します。<br>
-ECSにて用意されている`FireLens`というログドライバーを使用することで、自動で`FluentBit`のサイドカーコンテナが用意されます。
+`ECS`では、`OpenTelemetry`がECSのエージェントからコンテナのメトリクスを取得します。<br>
+また、`ECS`においては`Fluentd`よりも`FluentBit`の利用が推奨されているため、`FluentBit`を使用します。<br>
+`ECS`にて用意されている`FireLens`というログドライバーを使用することで、自動で`FluentBit`のサイドカーコンテナが用意されます。
 
 ## **ストレージ**
 <img src="image/S3.png" width="60" /><br>
@@ -217,7 +217,7 @@ Standardは無料でAdvancedは有料。Advancedはより強力に攻撃から�
 
 <img src="image/NetworkFirewall.png" width="60" /><br>
 **Network Firewall**<br>
-VPC向けのファイアーウォールです。<br>
+`VPC`向けのファイアーウォールです。<br>
 `Network ACL`や`Security Group`に比べてより高度なファイアウォールを実装できます。<br>
 
 <img src="image/NetworkACL.png" width="60" /><br>
@@ -248,7 +248,7 @@ AWSリソースやEC2インスタンス、オンプレミスサーバーの設�
 
 <img src="image/FlowLog.png" width="60" /><br>
 **VPC Flow Log**<br>
-VPC内のIPトラフィック状況をログとして保存できるVPCの機能です。<br>
+`VPC`内のIPトラフィック状況をログとして保存できる`VPC`の機能です。<br>
 
 <img src="image/AccessAnalyzer.png" width="60" /><br>
 **IAM Access Analyzer**<br>
@@ -279,7 +279,7 @@ AWSのベストプラクティスの情報に基づいて、今設定されて�
 <img src="image/Detective.png" width="60" /><br>
 **Detective**<br>
 `VPC Flow Log` `GuardDuty` `CloudTrail`から、
-潜在的なセキュリティ問題や不審なアクティビティを分析、調査<br>
+潜在的なセキュリティ問題や不審なアクティビティを分析、調査します。<br>
 
 ### セキュリティログの可視化
 ![](image/セキュリティログ.drawio.png)<br>
@@ -424,7 +424,7 @@ CloudFormationテンプレートの構文が正しいかテストを実行しま
 
 <img src="image/CodePipeline.png" width="60" /><br>
 **CodePipeline**<br>
-マネージド型の継続的デリバリーサービスで、CodeCommitからCodeBuild、CloudFormationの変更スタック作成までを、自動化します。<br>
+マネージド型の継続的デリバリーサービスで、`CodeCommit`から`CodeBuild`、`CloudFormation`の変更スタック作成までを、自動化します。<br>
 
 <img src="image/構築.drawio.png" width="500" /><br>
 
@@ -436,5 +436,5 @@ CloudFormationテンプレートの構文が正しいかテストを実行しま
 <img src="image/SAM.jpg" height="75" /><br>
 **Serverless Application Model(SAM)**<br>
 AWS でサーバーレスアプリケーション を構築するために使用できるオープンソースのフレームワークです。<br>
-CloudFormationを利用したAWSリソースの作成と、Lambda関数のデプロイを実行します。<br>
+`CloudFormation`を利用したAWSリソースの作成と、Lambda関数のデプロイを実行します。<br>
 
