@@ -176,6 +176,7 @@ ECSにて用意されている`FireLens`というログドライバーを使用�
 <img src="image/S3.png" width="60" /><br>
 **S3**<br>
 AWSのオブジェクトストレージです。<br>
+`S3 Strage Lens`というS3の使用状況とアクティビティの傾向を可視化し、コスト効率化、データ保護に関するベストプラクティスに向けた推奨事項が提供されるダッシュボードサービスが利用できます。<br>
 
 <img src="image/EBS.png" width="60" /><br>
 **EBS**<br>
@@ -190,7 +191,8 @@ Windows Server 上に構築されたフルマネージド共有ストレージ�
 <img src="image/RDS.png" width="60" />　　<img src="image/PostgreSQL.png" width="60" /><br><br>
 **RDS**<br>
 リレーショナルデータベースのマネージドサービスです。<br>
-`PostgreSQL`を使用しています。
+`PostgreSQL`を使用しています。<br>
+`RDS Performance Insights`というRDSのパフォーマンスを可視化したダッシュボードサービスが利用できます。<br>
 
 <img src="image/MongoDB.jpg" width="65" /><br>
 **MongoDB** on EC2<br>
@@ -236,7 +238,7 @@ VPC向けのファイアーウォールです。<br>
 ### **検知**<br>
 <img src="image/CloudTrail.png" width="60" /><br>
 **CloudTrail**<br>
-AWSAccountに対する操作のイベントログを記録するサービスです。<br>
+AWSアカウントに対する操作のイベントログを記録するサービスです。<br>
 取得できる操作記録は「管理イベント」「データイベント」「インサイトイベント」の3種類です。<br>
 
 <img src="image/Config.png" width="60" /><br>
@@ -365,11 +367,12 @@ AWS のサービスおよびリソースへのアクセスを管理します。<
 コードをサーバーなしで実行できるサービスで、運用においても様々なLambda関数を利用します。<br>
 言語はPythonかNode.jsが主流なので、現段階ではこれらの言語を使用しています。<br><br>
 <img src="image/Lambda.drawio.png" width="250" /><br>
-`EventBridge`や`SNS`をトリガーにして関数を実行できます。他にも様々なサービスをトリガーに出来ます。<br>
+`EventBridge`や`SNS`をトリガーにして関数を実行でき、他にも様々なサービスをトリガーに出来ます。<br>
 
 <img src="image/SNS.png" width="60" /><br>
 **SNS**<br>
-メールの送信だけでなく、`Lambda`の実行も行えるため、アラートに対しての自動対応が可能です。<br><br>
+メールの送信だけでなく、`Lambda`の実行も行えるため、アラートに対しての自動対応が可能です。<br>
+これを利用して、`SNS`の通知をTeamsに送信するようなLambda関数も作成しています。<br><br>
 <img src="image/SNS.drawio.png" width="250" /><br>
 様々なサービスから`SNS`にアラートを送信できます。
 
