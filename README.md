@@ -163,9 +163,9 @@ AWSのオブジェクトストレージです。<br>
 `EC2`と組み合わせて使用できる、ブロックストレージです。<br>
 
 <img src="image/FSx.png" width="60" /><br>
+**FSx for Windows File Server**<br>
 Windows Server 上に構築されたフルマネージド共有ストレージです。<br>
 
-**FSx for Windows File Server**<br>
 
 ## **データベース**
 <img src="image/RDS.png" width="60" />　　<img src="image/PostgreSQL.png" width="60" /><br><br>
@@ -386,10 +386,33 @@ Configルールに違反していた際に、自動修復するなどの使い�
 AWS内のリソースは基本的に`CloudFormation(CFn)`で構築し、`CodeCommit`でバージョン管理します。<br>
 `CloudFormation(CFn)`を利用することで、AWSリソースをコードで管理できるので、現状を把握しやすくなりますし、<br>
 `CodeCommit`を利用することで、変更差分がわかりやすく残るので、作業履歴として利用できます。<br>
-さらに、`CodeBuild`と`CodePipline`を利用して、コミットから構築までを自動化させます。<br>
+さらに、`CodeBuild`と`CodePipline`を利用して、コミットから構築までを自動化させます。<br><br>
+<img src="image/CFn.png" width="60" /><br>
+**CloudFormation**<br>
+コードでAWSリソースを構築するサービスです。<br>
+
+<img src="image/CodeCommit.png" width="60" /><br>
+**CodeCommit**<br>
+AWSのプライベートGitリポジトリです。<br>
+
+<img src="image/CodeBuild.png" width="60" /><br>
+**CodeBuild**<br>
+AWSマネージドのビルドサービスです。<br>
+CloudFormationテンプレートの構文が正しいかテストを実行します。<br>
+
+<img src="image/CodePipeline.png" width="60" /><br>
+**CodePipeline**<br>
+マネージド型の継続的デリバリーサービスで、CodeCommitからCodeBuild、CloudFormationの変更スタック作成までを、自動化します。<br>
+
 <img src="image/構築.drawio.png" width="500" /><br>
 
 `CloudFormation(CFn)`のテンプレートを`CodeCommit`にコミットすると、
 `CodePipline`により`CodeBuild`でテストされ、`CloudFormation`が実行されます。<br><br>
+
+同様に`Lambda`のコードを`CodeCommit`にコミットすると、`CodePipline`により`CodeBuild`でテストされ、`Serverless Application Model(SAM)`によって`CloudFormation`が実行され、作成された`Lambda`にコードのデプロイを行います。<br><br>
+
 <img src="image/SAM.jpg" height="75" /><br>
-同様に`Lambda`のコードを`CodeCommit`にコミットすると、`CodePipline`により`CodeBuild`でテストされ、`Serverless Application Model(SAM)`によって`CloudFormation`が実行され、作成された`Lambda`にコードのデプロイも行います。
+**Serverless Application Model(SAM)**<br>
+AWS でサーバーレスアプリケーション を構築するために使用できるオープンソースのフレームワークです。<br>
+CloudFormationを利用したAWSリソースの作成と、Lambda関数のデプロイを実行します。<br>
+
