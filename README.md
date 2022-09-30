@@ -26,28 +26,31 @@ AWSの基本的なサービスについても説明します。<br>
 ## **監視ツール**
 監視において使用するOSS(オープンソースソフトウェア)とAWSサービスについて説明します。<br><br>
 
-<img src="image/Prometheus.png" width="240"/><br><br>
+<img src="image/Prometheus.png" width="60"/><br>
+**Prometheus**<br>
 `Prometheus`はオープンソースのモニタリングツールで、CNCF(Cloud Native Computing Foundation)のgraduatedプロジェクトです。<br>
 >CNCFとはクラウドネイティブコンピューティング技術を推進する非営利団体で、CNCFのGraduatedプロジェクトはCNCFにより「成熟した」と認められたプロジェクトのことです。有名な例だとKubernetesが挙げられます。<br>
 
 Prometheus Exporterからデータを収集し、PromQLという専用クエリ言語でメトリクスデータを柔軟に表示できます。<br>
 `Grafana`が`Prometheus`の可視化ツールとしてよく利用されています。<br>
 デメリットとしてはストレージ設計や構築、運用管理にコストがかかったり、障害時の調査や復旧が難しい等があげられますが、AWSのマネージドサービスである`Amazon Managed Service for Prometheus(AMP)`を利用することでデメリットを解決できます。<br><br>
-<img src="image/Cortex.png" width="150" /><br>
+<img src="image/Cortex.png" width="60" /><br>
 ※`AMP`ではストレージにCNCFのIncubatingプロジェクトである`Cortex`が使用されていますが、`AMP`を使用する上ではストレージを意識する必要がないので、`Cortex`に関しても特に意識する必要はありません。<br><br>
 
-<img src="image/Grafana.png" width="200" /><br><br>
+<img src="image/Grafana.png" width="60" /><br>
+**Grafana**<br>
 `Grafana`はオープンソースのデータ可視化ツールで、可視化に特化しているため、他プロダクトが独自で用意しているダッシュボードよりも時系列グラフの可視化自由度が高いです。<br>
 また、データソースとしてさまざまなデータを可視化できます。<br>
 デメリットとしてはストレージ設計や構築、運用管理にコストがかかる等があげられますが、
 AWSのマネージドサービスである`Amazon Managed Grafana(AMG)`を利用することでデメリットを解決できます。<br>
 <br><br>
-<img src="image/OpenSearch.png" width="200" /><br><br>
+<img src="image/OpenSearch.png" width="57" /><br>
+**OpenSearch**<br>
 `OpenSearch`は`ElasticSearch`と`Kibana`から派生したオープンソースのツールで、AWSによって開発されました。<br>
 様々な形式のデータの収集・可視化が可能です。<br>
 AWSのマネージメントサービスである`Amazon OpenSearch Service`を使用します。<br>
 <br>
-<img src="image/ElasticSearch.jpg" height="70" />　　<img src="image/Kibana.png" height="70" /><br>
+<img src="image/ElasticSearch.png" height="60" />　　<img src="image/Kibana.png" height="58" /><br><br>
 ※`ElasticSearch`はElastic社によって開発されたオープンソースの全文検索エンジンでログの収集によく利用されています。<br>
 また、`Kibana`はElastic社によって開発された`ElasticSearch`の可視化ツールです。<br><br>
 
@@ -90,19 +93,22 @@ LinuxやWindowsなどの仮想サーバを作成できるサービスです。<b
 
 
 ### **ツール** <br>
-<img src="image/Fluentd.png" width="150" /><br><br>
+<img src="image/Fluentd.png" width="60" /><br>
+**Fluentd**<br>
 `Fluentd`はアプリケーションなどからログデータを収集し、フィルタリングして複数の宛先に送信できるオープンソースのツールで、CNCFのgraduatedプロジェクトです。<br>
 出力先として様々なサービスが用意されており、数百のプラグインが利用可能です。<br>
 <br><br>
-<img src="image/FluentBit.png" width="180" /><br><br>
+<img src="image/FluentBit.jpg" width="70" /><br>
+**FluentBit**<br>
 `FluentBit`は`Fluentd`の軽量版。<br>
 ECSではこちらを使用します。<br>
 <br><br>
-<img src="image/OpenTelemetry.png" width="190"/><br><br>
+<img src="image/OpenTelemetry.png" width="60"/><br>
+**OpenTelemetry**<br>
 `OpenTelemetry`はクラウドネイティブアプリケーションとインフラストラクチャから「メトリクス」「トレース」のキャプチャと成形、エクスポートをするオープンソースのツールで、CNCFのIncubatingプロジェクトです。<br>
 `AWS Disto for OpenTelemetry(ADOT)`というAWSサポートのディストリビューションがあり、エクスポート先にAWSのサービスがサポートされています。<br>
 <br><br>
-<img src="image/PrometheusLogo.png" width="60" /><br>
+<img src="image/Prometheus.png" width="60" /><br>
 **Prometheus Exporter**<br>
 `Prometheus`用のメトリクスを収集するツールです。<br>
 様々な種類のExporterが用意されており、以下がその例です。<br>
@@ -125,7 +131,8 @@ ECSではこちらを使用します。<br>
 `Systems Manager`用のエージェントです。<br>
 インストールすることで、サーバーに対して`Systems Manager`の様々な機能が利用できます。<br>
 <br>
-<img src="image/Ansible.png" width="200" /><br>
+<img src="image/Ansible.png" width="60" /><br>
+**Ansible**<br>
 `Ansible`は多数のサーバーや複数のクラウドインフラを統一的に制御できるオープンソースの構成管理ツールです。<br>
 「Playbook」というファイルを利用して、サーバーに接続することなく、インストールや設定ファイルの更新等実行できます。<br>
 `Systems Manager`のRun Commandという機能で「Playbook」が利用でき、ネット上で様々な「Playbook」を参照できるので活用しやすいです。<br>
@@ -358,5 +365,5 @@ AWS内のリソースは基本的に`CloudFormation(CFn)`で構築し、`CodeCom
 
 `CloudFormation(CFn)`のテンプレートを`CodeCommit`にコミットすると、
 `CodePipline`により`CodeBuild`でテストされ、`CloudFormation`が実行されます。<br><br>
-<img src="image/SAM.jpg" height="70" /><br>
+<img src="image/SAM.jpg" height="75" /><br>
 同様に`Lambda`のコードを`CodeCommit`にコミットすると、`CodePipline`により`CodeBuild`でテストされ、`Serverless Application Model(SAM)`によって`CloudFormation`が実行され、作成された`Lambda`にコードのデプロイも行います。
