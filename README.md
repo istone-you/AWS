@@ -2,7 +2,8 @@
 
 ## 全体図
 ![](image/監視運用.drawio.png)
-運用において使用するAWSサービスの全体図です。複雑で分かりづらいと思うので分けて説明します。
+運用において使用するAWSサービスの全体図です。複雑で分かりづらいと思うので分けて説明します。<br>
+AWSの基本的なサービスについても説明します。<br>
 ## 監視ツール
 監視において使用するOSS(オープンソースソフトウェア)とAWSサービスについて説明します。<br><br>
 
@@ -31,6 +32,9 @@ AWSのマネージメントサービスである`Amazon OpenSearch Service`を�
 ※`ElasticSearch`はElastic社によって開発されたオープンソースの全文検索エンジンでログの収集によく利用されています。<br>
 また、`Kibana`はElastic社によって開発された`ElasticSearch`の可視化ツールです。<br><br>
 
+<img src="image/CloudWatch.png" width="60" /><br>
+**CloudWatch**<br>
+AWSサービスのメトリクスとログを収集・可視化するAWSのサービスです。
 
 <img src="image/X-Ray.png" width="60" /><br>
 **X-Ray**<br>
@@ -50,9 +54,23 @@ S3内のデータをSQLを利用して分析できるAWSのサービスです。
 `Athena`からコストデータとサーバー情報を可視化します。<br>
 
 ## サーバー
-サーバーにインストールするツールについて説明します。<br>
+サーバーとサーバーにインストールするツールについて説明します。<br>
 <img src="image/サーバー.drawio.png" width="350" /><br>
 
+### **仮想サーバー**
+<img src="image/EC2.png" width="60" /><br>
+**EC2**<br>
+LinuxやWindowsなどの仮想サーバを作成できるサービスです。<br>
+<img src="image/ECS.png" width="60" /><br>
+**ECS**<br>
+コンテナ化されたアプリケーションを簡単にデプロイ、管理、およびスケーリングできるサービスです。<br>
+起動するサーバーのタイプには`EC2`と`Fargate`があり、どちらも使用しています。<br>
+<img src="image/Fargate.png" width="60" /><br>
+**Fargate**<br>
+`Fargate`を利用するとコンテナをサーバーレスで実行することができます。そのためインスタンスの管理が不要になります。<br>
+
+
+### **ツール** <br>
 <img src="image/Fluentd.png" width="150" /><br>
 `Fluentd`はアプリケーションなどからログデータを収集し、フィルタリングして複数の宛先に送信できるオープンソースのツールで、CNCFのgraduatedプロジェクトです。<br>
 出力先として様々なサービスが用意されており、数百のプラグインが利用可能です。<br>
@@ -105,7 +123,8 @@ ECSではこちらを使用します。<br>
 ![](image/EC2監視.drawio.png)<br>
 ### ECSの監視
 ![](image/ECS監視.drawio.png)<br>
-ECSにおいては`Fluentd`よりも`FluentBit`の利用が推奨されているため、`FluentBit`を使用します。<br>
+ECSでは、`OpenTelemetry`がECSのエージェントからコンテナのメトリクスを取得します。<br>
+また、ECSにおいては`Fluentd`よりも`FluentBit`の利用が推奨されているため、`FluentBit`を使用します。<br>
 ECSにて用意されている`FireLens`というログドライバーを使用することで、自動で`FluentBit`のサイドカーコンテナが用意されます。
 ## セキュリティ
 セキュリティに関しては以下のようにAWS内で様々なサービスが用意されています。<br>
@@ -189,19 +208,41 @@ AWSのベストプラクティスの情報に基づいて、今設定されて�
 `VPC Flow Log` `GuardDuty` `CloudTrail`から、
 潜在的なセキュリティ問題や不審なアクティビティを分析、調査<br>
 
-### ログの可視化
+### 可視化
 ![](image/セキュリティログ.drawio.png)<br>
 セキュリティログは`OpenSearch`に集約・可視化、`Grafana`に一元化します。<br>
 
 ## ネットワーク
-ネットワークのメトリクスとログも可視化します。<br>
+<img src="image/VPC.png" width="60" /><br>
+**VPC**<br>
+AWS上に作成できるプライベート仮想ネットワーク空間です<br>
+
+<img src="image/DirectConnect.png" width="60" /><br>
+**DirectConnect**<br>
+AWS への専用ネットワーク接続です。さくらインターネットと接続しています。<br>
+<img src="image/VPN.png" width="60" /><br>
+社内サーバーとはVPN接続で接続しています。<br>
+
+<img src="image/Route53.png" width="60" /><br>
+**Route53**<br>
+AWSのDNSサービスです。ドメインのネームサーバーはこちらに移管済みです。<br>
+
+<img src="image/CloudFront.png" width="60" /><br>
+**CloudFront**<br>
+コンテンツ配信ネットワーク (CDN) サービスです。<br>
+
+<img src="image/ELB.png" width="60" /><br>
+**ELB**<br>
+ロードバランシングを行うサービスです。<br><br>
+
+### 可視化
+これらサービスのメトリクスとログも可視化します。<br>
 <img src="image/ネットワーク.drawio.png" width="600" /><br>
 ネットワークに関するメトリクスは`CloudWatch`で可視化し、`Grafana`に一元化、<br>
 ネットワークに関するログは`OpenSearch`に集約・可視化、`Grafana`に一元化します。<br>
 
 ## コスト管理
 以下のサービスを利用して、コストの監視と最適化を行います<br>
-<img src="image/コスト管理.drawio.png" width="600" /><br>
 
 <img src="image/CostExplorer.png" width="60" /><br>
 **Cost Explorer**<br>
@@ -220,8 +261,11 @@ AWSのコストやリソースの使用状況を`S3`にアップロードしま�
 
 <img src="image/ComputeOptimizer.png" width="60" /><br>
 **Compute Optimizer**<br>
-`EC2`のCPU使用率などの利用状況を機械学習し、最適なインスタンスタイプを推奨してくれます。<br>
+`EC2`のCPU使用率などの利用状況を機械学習し、最適なインスタンスタイプを推奨してくれます。<br><br>
 
+### 可視化
+<img src="image/コスト管理.drawio.png" width="600" /><br>
+`Budgets`と`Cost & Usage Report`のデータは`Grafana`で可視化します。<br>
 ## アカウント管理
 `IAM Identity Center`と呼ばれるSingle Sign On（SSO）のサービスでログイン管理を行います。<br>
 <img src="image/アカウント管理.drawio.png" width="500" /><br>
@@ -230,39 +274,47 @@ AWSのコストやリソースの使用状況を`S3`にアップロードしま�
 ## 運用の自動化
 以下のサービスを利用して、運用を出来るだけ自動化させます。<br>
 これらサービスのメトリクスも`CloudWatch`で取得できるので、自動化が失敗していないかどうか等の監視も行えます。<br>
-<img src="image/自動化.drawio.png" width="350" /><br>
 
 <img src="image/Lambda.png" width="60" /><br>
 **Lambda**<br>
 コードをサーバーなしで実行できるサービスで、運用においても様々なLambda関数を利用します。<br>
-言語はPythonかNode.jsが主流なので、現段階ではこれらの言語を使用しています。<br>
+言語はPythonかNode.jsが主流なので、現段階ではこれらの言語を使用しています。<br><br>
+<img src="image/Lambda.drawio.png" width="250" /><br>
+`EventBridge`や`SNS`をトリガーにして関数を実行できます。他にも様々なサービスをトリガーに出来ます。<br>
+
+<img src="image/SNS.png" width="60" /><br>
+**SNS**<br>
+メールの送信だけでなく、`Lambda`の実行も行えるため、アラートに対しての自動対応が可能です。<br><br>
+<img src="image/SNS.drawio.png" width="250" /><br>
+様々なサービスから`SNS`にアラートを送信できます。
 
 <img src="image/EventBridge.png" width="60" /><br>
 **EventBridge**<br>
 AWSのイベントやスケジュールを検知し、`Lambda`の実行や`SNS`を利用してのメール通知を行います。<br>
-`SystemsManager`のAutomationが実行出来るため、サーバーに対しての自動処理を行えます。<br>
-
-<img src="image/SNS.png" width="60" /><br>
-**SNS**<br>
-メールの送信だけでなく、`Lambda`の実行も行えるため、アラートに対しての自動対応が可能です。<br>
-`OpenSearch Service`と`Amazon Managed Grafana`、`CloudWatch`から`SNS`にアラートを送信できます。<br>
+`Lambda`や`SystemsManager`のAutomationが実行出来るため、AWSでのイベントをトリガーにした自動処理を行えます。<br>
 
 <img src="image/AutoScaling.png" width="60" /><br>
 **Auto Scaling**<br>
-インスタンスを自動でスケーリングします。<br>
+CloudWatchアラームをトリガーにインスタンスを自動でスケーリングします。<br>
 
 <img src="image/Backup.png" width="60" /><br>
 **Backup**<br>
 AWSサービスのバックアップのスケジュール管理やバックアップの保持期間の管理、バックアップに対するアクセスポリシーの設定を一元管理できます。<br>
 
+<img src="image/DevOpsGuru.png" width="60" /><br>
+**DevOps Guru**<br>
+機械学習を使用して異常な動作パターンを検出するサービスです。
+
 <img src="image/SSM.png" width="60" /><br>
 **System Manager(SSM)**<br>
 複数のサーバーに一括でコマンドを実行、複数の処理を一括実行、
 サーバー上で稼働するソフトウェアの一覧を表示したりと、運用に関する複数の機能が利用できます。<br>
-SSM Agentをサーバーに導入することで利用できます。<br><br>
-
+SSM Agentをサーバーに導入することで利用できます。オンプレのサーバーにも利用可能です。<br><br>
+<img src="image/Automation.drawio.png" width="250" /><br>
+`EventBridge`や`Config`をトリガーに`Systems Manager`のAutomationが実行できます。<br>
+Configルールに違反していた際に、自動修復するなどの使い方ができます。<br><br>
 <img src="image/インベントリ.drawio.png" width="600" /><br>
-また、`Systems Manager`で取得できるサーバーのインベントリも`Glue`と`Athena`を利用して、`Grafana`で可視化ができます。<br>
+`Systems Manager`で取得できるサーバーのインベントリも`Glue`と`Athena`を利用して、`Grafana`で可視化ができます。<br>
 ## 構築
 AWS内のリソースは基本的に`CloudFormation(CFn)`で構築し、`CodeCommit`でバージョン管理します。<br>
 `CloudFormation(CFn)`を利用することで、AWSリソースをコードで管理できるので、現状を把握しやすくなりますし、<br>
@@ -273,6 +325,4 @@ AWS内のリソースは基本的に`CloudFormation(CFn)`で構築し、`CodeCom
 `CloudFormation(CFn)`のテンプレートを`CodeCommit`にコミットすると、
 `CodePipline`により`CodeBuild`でテストされ、`CloudFormation`が実行されます。<br><br>
 <img src="image/SAM.jpg" height="70" /><br>
-同様に`Lambda`のコードを`CodeCommit`にコミットすると、
-`CodePipline`により`CodeBuild`でテストされ、
-`Serverless Application Model(SAM)`によって`CloudFormation`が実行されます。
+同様に`Lambda`のコードを`CodeCommit`にコミットすると、`CodePipline`により`CodeBuild`でテストされ、`Serverless Application Model(SAM)`によって`CloudFormation`が実行され、作成された`Lambda`にコードのデプロイも行います。
