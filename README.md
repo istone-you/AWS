@@ -303,7 +303,7 @@ AWSのDNSサービスです。ドメインのネームサーバーはこちら�
 ドメイン登録からレコードのバックアップ、ApacheのConfファイルの編集までを実行できるアプリを作成しています。ApacheのConfファイルの編集の際のミスを無くせるかと思います。<br>
 バックアップに関しては、こちらのアプリを使用しないと実行できません。<br>
 
-<img src="image/CloudFront.png" width="60" /><br>
+<img src="image/CLoudFront.png" width="60" /><br>
 **CloudFront**<br>
 コンテンツ配信ネットワーク (CDN) サービスです。<br>
 
