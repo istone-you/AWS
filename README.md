@@ -104,6 +104,7 @@ LinuxやWindowsなどの仮想サーバーを作成できるサービスです�
 
 **ECS**<br>
 コンテナ化されたアプリケーションを簡単にデプロイ、管理、およびスケーリングできるサービスです。<br>
+タスク、サービス、クラスターと3つの概念がありますが、簡単に説明するとタスクがコンテナ、サービスでコンテナ（タスク）を管理し、クラスターはコンテナ（タスク）が実行されるインスタンス群のことです。<br>
 起動するサーバーのタイプには`EC2`と`Fargate`があり、どちらも使用しています。<br>
 
 <img src="image/Fargate.png" width="60" /><br>
@@ -176,7 +177,7 @@ LinuxやWindowsなどの仮想サーバーを作成できるサービスです�
 <img src="image/S3.png" width="60" /><br>
 **S3**<br>
 AWSのオブジェクトストレージです。<br>
-`S3 Strage Lens`というS3の使用状況とアクティビティの傾向を可視化し、コスト効率化、データ保護に関するベストプラクティスに向けた推奨事項が提供されるダッシュボードサービスが利用できます。<br>
+`S3 Strage Lens`という`S3`の使用状況とアクティビティの傾向を可視化し、コスト効率化、データ保護に関するベストプラクティスに向けた推奨事項が提供されるダッシュボードサービスが利用できます。<br>
 
 <img src="image/EBS.png" width="60" /><br>
 **EBS**<br>
@@ -184,7 +185,7 @@ AWSのオブジェクトストレージです。<br>
 
 <img src="image/FSx.png" width="60" /><br>
 **FSx for Windows File Server**<br>
-Windows Server 上に構築されたフルマネージド共有ストレージです。<br>
+Windows Server 上に構築されたフルマネージド共有ファイルストレージです。<br>
 
 
 ## **データベース**
@@ -197,7 +198,7 @@ Windows Server 上に構築されたフルマネージド共有ストレージ�
 <img src="image/MongoDB.jpg" width="65" /><br>
 **MongoDB** on EC2<br>
 ドキュメント指向のNoSQLデータベースです。<br>
-AWSにて`DocumentDB`と呼ばれる`MongoDB`互換のサービスがありますが、`EC2`にて運用するそうです。
+AWSにて`DocumentDB`と呼ばれる`MongoDB`互換のサービスがありますが、`EC2`にて運用するようです。
 
 ## **セキュリティ**
 セキュリティに関しては以下のようにAWS内で様々なサービスが用意されています。<br>
@@ -379,12 +380,14 @@ AWS のサービスおよびリソースへのアクセスを管理します。<
 
 <img src="image/EventBridge.png" width="60" /><br>
 **EventBridge**<br>
-AWSのイベントやスケジュールを検知し、`Lambda`の実行や`SNS`を利用してのメール通知を行います。<br>
-`Lambda`や`SystemsManager`のAutomationが実行出来るため、AWSでのイベントをトリガーにした自動処理を行えます。<br>
+AWSのイベントやスケジュールを検知し、`Lambda`や`SystemsManager`のAutomation、Run Commandの実行、`SNS`を利用してのメール通知を行います。<br>
+AWSでのイベントをトリガーにした自動処理を行えます。<br>
+<img src="image/EventBridge.drawio.png" width="350" /><br>
 
 <img src="image/AutoScaling.png" width="60" /><br>
 **Auto Scaling**<br>
 CloudWatchアラームをトリガーにインスタンスを自動でスケーリングします。<br>
+<img src="image/AutoScaling.drawio.png" width="550" /><br>
 
 <img src="image/Backup.png" width="60" /><br>
 **Backup**<br>
@@ -393,7 +396,9 @@ CloudWatchアラームをトリガーにインスタンスを自動でスケー�
 
 <img src="image/DevOpsGuru.png" width="60" /><br>
 **DevOps Guru**<br>
-機械学習を使用して異常な動作パターンを検出するサービスです。
+機械学習を使用して異常な動作パターンを検出するサービスです。<br>
+<img src="image/DevOpsGuru.drawio.png" width="350" /><br>
+`CloudWatch` `Config` `CLoudFormation` `X-Ray` `Systems Manager OpsCenter`が`DevOps Guru`で異常を検知できるサービスです。<br>
 
 <img src="image/SSM.png" width="60" /><br>
 **System Manager(SSM)**<br>
