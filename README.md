@@ -36,6 +36,11 @@ AWSの基本的なサービスについても簡単に説明します。<br>
 Prometheus Exporterからデータを収集し、PromQLという専用クエリ言語でメトリクスデータを柔軟に表示できます。<br>
 `Grafana`が`Prometheus`の可視化ツールとしてよく利用されています。<br>
 デメリットとしてはストレージ設計や構築、運用管理にコストがかかったり、障害時の調査や復旧が難しい等があげられますが、AWSのマネージドサービスである`Amazon Managed Service for Prometheus(AMP)`を利用することでデメリットを解決できます。<br><br>
+
+<img src="image/AMP.png" width="60"/><br>
+**Amazon Managed Service for Prometheus(AMP)**<br>
+Prometheus との互換性を持つモニタリングサービスです。<br>
+
 <img src="image/Cortex.png" width="60" /><br>
 ※`AMP`ではストレージにCNCFのIncubatingプロジェクトである`Cortex`が使用されていますが、`AMP`を使用する上ではストレージを意識する必要がないので、`Cortex`に関しても特に意識する必要はありません。<br><br>
 
@@ -44,16 +49,25 @@ Prometheus Exporterからデータを収集し、PromQLという専用クエリ�
 `Grafana`はオープンソースのデータ可視化ツールで、可視化に特化しているため、他プロダクトが独自で用意しているダッシュボードよりも時系列グラフの可視化自由度が高いです。<br>
 また、データソースとしてさまざまなデータを可視化できます。<br>
 デメリットとしてはストレージ設計や構築、運用管理にコストがかかる等があげられますが、
-AWSのマネージドサービスである`Amazon Managed Grafana(AMG)`を利用することでデメリットを解決できます。<br>
-<br><br>
+AWSのマネージドサービスである`Amazon Managed Grafana(AMG)`を利用することでデメリットを解決できます。<br><br>
+
+<img src="image/AMG.png" width="60"/><br>
+**Amazon Managed Grafana(AMG)**<br>
+オープンソースの Grafana 向けのフルマネージドサービスです。<br><br>
+
 <img src="image/OpenSearch.png" width="57" /><br>
 **OpenSearch**<br>
 `OpenSearch`は`ElasticSearch`と`Kibana`から派生したオープンソースのツールで、AWSによって開発されました。<br>
 様々な形式のデータの収集・可視化が可能です。<br>
-AWSのマネージメントサービスである`Amazon OpenSearch Service`を使用します。<br>
-<br>
+AWSのマネージメントサービスである`Amazon OpenSearch Service`を使用します。<br><br>
+
+<img src="image/OpenSearchService.png" width="60"/><br>
+**Amazon OpenSearch Service**<br>
+AWS クラウドにおける `OpenSearch`クラスターのデプロイ、オペレーション、スケーリングを容易にするマネージドサービスです。<br>
+`ElasticSearch`もバージョン7.10までサポートされています。(バージョン7.10以降はオープンソースではなくなりました。)<br><br>
+
 <img src="image/ElasticSearch.png" height="60" />　　<img src="image/Kibana.png" height="58" /><br><br>
-※`ElasticSearch`はElastic社によって開発されたオープンソースの全文検索エンジンでログの収集によく利用されています。<br>
+※`ElasticSearch`はElastic社によって開発された全文検索エンジンでログの収集によく利用されています。<br>
 また、`Kibana`はElastic社によって開発された`ElasticSearch`の可視化ツールです。<br><br>
 
 <img src="image/CloudWatch.png" width="60" /><br>
@@ -84,11 +98,14 @@ S3内のデータをSQLを利用して分析できるAWSのサービスです。
 ### **仮想サーバー**
 <img src="image/EC2.png" width="60" /><br>
 **EC2**<br>
+
 LinuxやWindowsなどの仮想サーバを作成できるサービスです。<br>
 <img src="image/ECS.png" width="60" /><br>
+
 **ECS**<br>
 コンテナ化されたアプリケーションを簡単にデプロイ、管理、およびスケーリングできるサービスです。<br>
 起動するサーバーのタイプには`EC2`と`Fargate`があり、どちらも使用しています。<br>
+
 <img src="image/Fargate.png" width="60" /><br>
 **Fargate**<br>
 `Fargate`を利用するとコンテナをサーバーレスで実行することができます。そのためインスタンスの管理が不要になります。<br>
@@ -98,18 +115,18 @@ LinuxやWindowsなどの仮想サーバを作成できるサービスです。<b
 <img src="image/Fluentd.png" width="60" /><br>
 **Fluentd**<br>
 `Fluentd`はアプリケーションなどからログデータを収集し、フィルタリングして複数の宛先に送信できるオープンソースのツールで、CNCFのgraduatedプロジェクトです。<br>
-出力先として様々なサービスが用意されており、数百のプラグインが利用可能です。<br>
-<br><br>
+出力先として様々なサービスが用意されており、数百のプラグインが利用可能です。AWSのサービスも出力先として用意されています。<br><br>
+
 <img src="image/FluentBit.jpg" width="70" /><br>
 **FluentBit**<br>
 `FluentBit`は`Fluentd`の軽量版。<br>
-ECSではこちらを使用します。<br>
-<br><br>
+ECSではこちらを使用します。<br><br>
+
 <img src="image/OpenTelemetry.png" width="60"/><br>
 **OpenTelemetry**<br>
 `OpenTelemetry`はクラウドネイティブアプリケーションとインフラストラクチャから「メトリクス」「トレース」のキャプチャと成形、エクスポートをするオープンソースのツールで、CNCFのIncubatingプロジェクトです。<br>
-`AWS Disto for OpenTelemetry(ADOT)`というAWSサポートのディストリビューションがあり、エクスポート先にAWSのサービスがサポートされています。<br>
-<br><br>
+`AWS Disto for OpenTelemetry(ADOT)`というAWSサポートのディストリビューションがあり、エクスポート先にAWSのサービスがサポートされています。<br><br>
+
 <img src="image/Prometheus.png" width="60" /><br>
 **Prometheus Exporter**<br>
 `Prometheus`用のメトリクスを収集するツールです。<br>
@@ -126,19 +143,19 @@ ECSではこちらを使用します。<br>
 <img src="image/CloudWatch.png" width="60" /><br>
 **CloudWatch Agent**<br>
 `CloudWatch`用のメトリクス、ログを収集するエージェントです。<br>
-基本的には`Prometheus`でメトリクスを収集しますが、`Auto Scaling`や`Compute Optimizer`では`CloudWatch`のメトリクスを利用するため、`CloudWatch`でも一部メトリクスを収集することになります。<br>
+基本的には`Prometheus`でメトリクスを収集しますが、`Auto Scaling`や`Compute Optimizer`では`CloudWatch`のメトリクスを利用するため、`CloudWatch`でも一部メトリクスを収集することになります。<br><br>
 
 <img src="image/SSM.png" width="60" /><br>
 **SSM Agent**<br>
 `Systems Manager`用のエージェントです。<br>
-インストールすることで、サーバーに対して`Systems Manager`の様々な機能が利用できます。<br>
-<br>
+インストールすることで、サーバーに対して`Systems Manager`の様々な機能が利用できます。<br><br>
+
 <img src="image/Ansible.png" width="60" /><br>
 **Ansible**<br>
 `Ansible`は多数のサーバーや複数のクラウドインフラを統一的に制御できるオープンソースの構成管理ツールです。<br>
 「Playbook」というファイルを利用して、サーバーに接続することなく、インストールや設定ファイルの更新等実行できます。<br>
-`Systems Manager`のRun Commandという機能で「Playbook」が利用でき、ネット上で様々な「Playbook」を参照できるので活用しやすいです。<br>
-ドメイン登録の際のApacheの設定ファイルの編集などで利用します。<br>
+`Systems Manager`のRun Commandという機能で`Ansible`のインストールと「Playbook」の実行を行えます。<br>
+ドメイン登録の際のApacheの設定ファイルの編集などで利用します。<br><br>
 
 ## **サーバー監視**
 サーバーの監視においてはメトリクス・ログ・トレースの3つの監視が重要になります。<br>
