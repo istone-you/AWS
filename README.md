@@ -235,6 +235,10 @@ Standardは無料でAdvancedは有料。Advancedはより強力に攻撃から�
 **KMS**<br>
 暗号化操作に使用されるキーを簡単に作成および管理します。<br>
 
+<img src="image/SecretsManager.png" width="60" /><br>
+**Secrets Manager**<br>
+シークレットのローテーション、管理を行うサービス<br>
+
 ### **検知**<br>
 <img src="image/CloudTrail.png" width="60" /><br>
 **CloudTrail**<br>
@@ -262,18 +266,15 @@ AWSリソースやEC2インスタンス、オンプレミスサーバーの設�
 **Inspector**<br>
 SSMエージェントを導入したサーバーの脆弱性を検知するサービスです。<br>
 
-<img src="image/Macie.png" width="60" /><br>
-**Macie**<br>
-S3バケット上にある個人情報等の機密データを自動的に発見し、通知や保護処理を実行するサービスです。<br>
-
 <img src="image/SecurityHub.png" width="60" /><br>
 **Security Hub**<br>
-`GuardDuty` `Inspector` `Detective` `Macie` `IAM Access Analyzer` `Config`の検知内容を集約します。<br>
+`GuardDuty` `Inspector` `Detective` `IAM Access Analyzer` `Config`の検知内容を集約します。その他AWSでのセキュリティサービスや、サードパーティ製のセキュリティサービスの検知内容も集約できます。<br>
 また、べストプラクティスや業界標準に基づいた、継続的なAWS環境の自動チェックも行います。<br>
 
 <img src="image/TrustedAdvisor.png" width="60" /><br>
 **Trusted Adviser**<br>
 AWSのベストプラクティスの情報に基づいて、今設定されているものを自動的にをチェックし、推奨事項をレコメンドしてくれます。<br>
+コスト最適化、セキュリティ、耐障害性、パフォーマンス、サービスクォータの５つの項目のチェックを行います。セキュリティの項目では`Security Hub`の検知結果を表示できます。<br>
 
 ### **調査**<br>
 <img src="image/Detective.png" width="60" /><br>
@@ -387,7 +388,8 @@ CloudWatchアラームをトリガーにインスタンスを自動でスケー�
 
 <img src="image/Backup.png" width="60" /><br>
 **Backup**<br>
-AWSサービスのバックアップのスケジュール管理やバックアップの保持期間の管理、バックアップに対するアクセスポリシーの設定を一元管理できます。<br>
+様々なAWSサービスのバックアップのスケジュール管理やバックアップの保持期間の管理、バックアップに対するアクセスポリシーの設定を一元管理できます。<br>
+<img src="image/Backup.drawio.png" width="500" /><br>
 
 <img src="image/DevOpsGuru.png" width="60" /><br>
 **DevOps Guru**<br>
@@ -397,12 +399,15 @@ AWSサービスのバックアップのスケジュール管理やバックア�
 **System Manager(SSM)**<br>
 複数のサーバーに一括でコマンドを実行、複数の処理を一括実行、
 サーバー上で稼働するソフトウェアの一覧を表示したりと、運用に関する複数の機能が利用できます。<br>
+`Systems Manager`のSession Managerという機能を利用すれば、SSHポートを開かなくてもサーバーにログインでき、踏み台サーバーなしで、プライベートサブネット内のEC2インスタンスに接続することも可能です。<br>
 SSM Agentをサーバーに導入することで利用できます。オンプレのサーバーにも利用可能です。<br><br>
 <img src="image/Automation.drawio.png" width="250" /><br>
-`EventBridge`や`Config`をトリガーに`Systems Manager`のAutomationが実行できます。<br>
+`EventBridge`や`Config`をトリガーに`Systems Manager`のAutomationという機能が実行できます。<br>
 Configルールに違反していた際に、自動修復するなどの使い方ができます。<br><br>
 <img src="image/インベントリ.drawio.png" width="600" /><br>
-`Systems Manager`で取得できるサーバーのインベントリも`Glue`と`Athena`を利用して、`Grafana`で可視化ができます。<br>
+`Systems Manager`のインベントリという機能でで取得できるサーバーのインベントリも`Glue`と`Athena`を利用して、`Grafana`で可視化ができます。<br><br>
+<img src="image/Explorer.drawio.png" width="600" /><br>
+`Systems Manager`のExplorerという機能ではAWSにおける様々な情報を一元化したダッシュボードを確認出来ます。
 
 ## **構築**
 AWS内のリソースは基本的に`CloudFormation(CFn)`で構築し、`CodeCommit`でバージョン管理します。<br>
