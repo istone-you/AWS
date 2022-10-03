@@ -8,6 +8,7 @@
 - [サーバー監視](#サーバー監視)
     - [EC2の監視](#EC2の監視)
     - [ECSの監視](#ECSの監視)
+    - [EC2・ECS以外のAWSサービスの監視](#EC2・ECS以外のAWSサービスの監視)
 - [ストレージ](#ストレージ)
 - [データベース](#データベース)
 - [セキュリティ](#セキュリティ)
@@ -22,7 +23,7 @@
 
 
 ## **全体図**
-![](image/監視運用.drawio.png)
+<img src="image/監視運用.drawio.png" width="100%"/><br>
 運用において使用するAWSサービスの全体図です。（自分の頭の整理用の側面が強いです。）<br>複雑で分かりづらいかと思うので、細かく分けて説明します。AWSの基本的なサービスについても簡単に説明します。<br>
 ## **監視ツール**
 監視において使用するOSS(オープンソースソフトウェア)とAWSサービスについて説明します。<br><br>
@@ -80,6 +81,7 @@ AWSサービスのメトリクスとログを収集・可視化するAWSのサ�
 <img src="image/Athena.png" width="60" /><br>
 **Athena**<br>
 S3内のデータをSQLを利用して分析できるAWSのサービスです。`Glue`というサービスでS3のデータのテーブルを作成し`Athena`にてSQLでの分析が出来るようにします。
+
 ### Grafanaによる可視化と一元化
 監視項目によってツールやサービスが分かれていると面倒なので`Grafana`のダッシュボードで出来るだけすべてを監視できるようにしています。<br>
 `Zabbix`のメトリクスも`Grafana`で確認することが可能です。<br>
@@ -112,7 +114,7 @@ LinuxやWindowsなどの仮想サーバーを作成できるサービスです�
 `Fargate`を利用するとコンテナをサーバーレスで実行することができます。そのためインスタンスの管理が不要になります。<br>
 
 
-### **ツール** <br>
+### **ツール**
 <img src="image/Fluentd.png" width="60" /><br>
 **Fluentd**<br>
 `Fluentd`はアプリケーションなどからログデータを収集し、フィルタリングして複数の宛先に送信できるオープンソースのツールで、CNCFのgraduatedプロジェクトです。<br>
@@ -165,13 +167,21 @@ LinuxやWindowsなどの仮想サーバーを作成できるサービスです�
 `S3`から`Lambda`を利用して成形後、`OpenSearch`に送信・可視化し、`Grafana`に一元化します。<br>
 ※ここで使用する`Lambda`は[SIEM on Amazon OpenSearch Service](https://github.com/aws-samples/siem-on-amazon-opensearch-service)を使用しています。<br>
 - トレースは`OpenTelemetry`のSDKをアプリに導入することで、アプリから取得できるようになり、`OpenTelemetry`にて`X-Ray`用のデータに成形後、`X-Ray`に送信・可視化し、`Grafana`に一元化します。<br>
+
 ### EC2の監視
 ![](image/EC2監視.drawio.png)<br>
+
 ### ECSの監視
 ![](image/ECS監視.drawio.png)<br>
 `ECS`では、`OpenTelemetry`がECSのエージェントからコンテナのメトリクスを取得します。<br>
 また、`ECS`においては`Fluentd`よりも`FluentBit`の利用が推奨されているため、`FluentBit`を使用します。<br>
-`ECS`にて用意されている`FireLens`というログドライバーを使用することで、自動で`FluentBit`のサイドカーコンテナが用意されます。
+`ECS`にて用意されている`FireLens`というログドライバーを使用することで、自動で`FluentBit`のサイドカーコンテナが用意されます。<br>
+
+### EC2・ECS以外のAWSサービスの監視
+<img src="image/その他AWSサービスの監視.drawio.png" width="650" /><br>
+`CloudWatch`のメトリクスは直接監視アカウントの`Grafana`で監視できます。<br>
+ログは`S3`と`OpenSearch`経由で監視できます。<br>
+`Lambda`のトレースもX-Rayで可視化可能で、`CloudWatch`同様、直接監視アカウントの`Grafana`で監視できます。<br>
 
 ## **ストレージ**
 <img src="image/S3.png" width="60" /><br>
