@@ -87,7 +87,7 @@ S3内のデータをSQLを利用して分析できるAWSのサービスです。
 `Zabbix`のメトリクスも`Grafana`で確認することが可能です。<br>
 ただ`Grafana`ですべてが監視出来るわけではないので、詳細を知りたい際には各々のツールやサービスを確認することになると思います。<br>
 ダッシュボードで詳細が確認できるツール・サービスについては全体図にてダッシュボードマークをつけています。<br>
-![](image/Grafana.drawio.png)
+<img src="image/Grafana.drawio.png" width="100%"/><br>
 `Prometheus`・`CloudWatch`・`Zabbix`からメトリクス、<br>
 `OpenSearch`からログ(＋セキュリティ関連のログ)、<br>
 `X-Ray`からトレース、<br>
@@ -169,10 +169,10 @@ LinuxやWindowsなどの仮想サーバーを作成できるサービスです�
 - トレースは`OpenTelemetry`のSDKをアプリに導入することで、アプリから取得できるようになり、`OpenTelemetry`にて`X-Ray`用のデータに成形後、`X-Ray`に送信・可視化し、`Grafana`に一元化します。<br>
 
 ### EC2の監視
-![](image/EC2監視.drawio.png)<br>
+<img src="image/EC2監視.drawio.png" width="100%"/><br>
 
 ### ECSの監視
-![](image/ECS監視.drawio.png)<br>
+<img src="image/ECS監視.drawio.png" width="100%"/><br>
 `ECS`では、`OpenTelemetry`がECSのエージェントからコンテナのメトリクスを取得します。<br>
 また、`ECS`においては`Fluentd`よりも`FluentBit`の利用が推奨されているため、`FluentBit`を使用します。<br>
 `ECS`にて用意されている`FireLens`というログドライバーを使用することで、自動で`FluentBit`のサイドカーコンテナが用意されます。<br>
@@ -213,7 +213,7 @@ AWSにて`DocumentDB`と呼ばれる`MongoDB`互換のサービスがありま�
 ## **セキュリティ**
 セキュリティに関しては以下のようにAWS内で様々なサービスが用意されています。<br>
 これらも可視化して監視できるようにしています。<br><br>
-![](image/セキュリティ.drawio.png)<br>
+<img src="image/セキュリティ.drawio.png" width="100%"/><br>
 
 ### **保護**<br>
 <img src="image/WAF.png" width="60" /><br>
@@ -294,7 +294,7 @@ AWSのベストプラクティスの情報に基づいて、今設定されて�
 潜在的なセキュリティ問題や不審なアクティビティを分析、調査します。<br>
 
 ### セキュリティログの可視化
-![](image/セキュリティログ.drawio.png)<br>
+<img src="image/セキュリティログ.drawio.png" width="800"/><br>
 セキュリティログは`OpenSearch`に集約・可視化、`Grafana`に一元化します。<br>
 
 ## **ネットワーク**
