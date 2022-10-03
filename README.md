@@ -180,8 +180,8 @@ LinuxやWindowsなどの仮想サーバーを作成できるサービスです�
 ### EC2・ECS以外のAWSサービスの監視
 <img src="image/その他AWSサービスの監視.drawio.png" width="650" /><br>
 `CloudWatch`のメトリクスは直接監視アカウントの`Grafana`で監視できます。<br>
-ログは`S3`と`OpenSearch`経由で監視できます。<br>
-`Lambda`のトレースもX-Rayで可視化可能で、`CloudWatch`同様、直接監視アカウントの`Grafana`で監視できます。<br>
+`CloudWatch`のログは`S3`と`OpenSearch`を経由して`Grafana`で監視できます。<br>
+`Lambda`のトレースも`X-Ray`で可視化でき、`CloudWatch`同様、直接監視アカウントの`Grafana`で監視できます。<br>
 
 ## **ストレージ**
 <img src="image/S3.png" width="60" /><br>
