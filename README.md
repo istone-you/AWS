@@ -16,7 +16,7 @@
 - [ネットワーク](#ネットワーク)
     - [ネットワークの可視化](#ネットワークの可視化)
 - [コスト管理](#コスト管理)
-    - [可視化](#コストの可視化)
+    - [コストの可視化](#コストの可視化)
 - [アカウント管理](#アカウント管理)
 - [運用の自動化](#運用の自動化)
 - [構築](#構築)
@@ -24,7 +24,7 @@
 
 ## **全体図**
 <img src="image/監視運用.drawio.png" width="100%"/><br>
-運用において使用するAWSサービスの全体図です。（自分の頭の整理用の側面が強いです。）<br>複雑で分かりづらいかと思うので、細かく分けて説明します。AWSの基本的なサービスについても簡単に説明します。<br>
+運用において使用するAWSサービスの全体図です。（サーバーに関しては複数のEC2・ECSがあります。別途構成図で確認してください。）<br>複雑で分かりづらいかと思うので、細かく分けて説明します。AWSの基本的なサービスについても簡単に説明します。<br>
 ## **監視ツール**
 監視において使用するOSS(オープンソースソフトウェア)とAWSサービスについて説明します。<br><br>
 
@@ -413,16 +413,41 @@ CloudWatchアラームをトリガーにインスタンスを自動でスケー�
 <img src="image/SSM.png" width="60" /><br>
 **System Manager(SSM)**<br>
 複数のサーバーに一括でコマンドを実行、複数の処理を一括実行、
-サーバー上で稼働するソフトウェアの一覧を表示したりと、運用に関する複数の機能が利用できます。<br>
-`Systems Manager`のSession Managerという機能を利用すれば、SSHポートを開かなくてもサーバーにログインでき、踏み台サーバーなしで、プライベートサブネット内のEC2インスタンスに接続することも可能です。<br>
+サーバー上で稼働するソフトウェアの一覧を表示したりと、運用に関する複数の機能が用意されています。<br>
 SSM Agentをサーバーに導入することで利用できます。オンプレのサーバーにも利用可能です。<br><br>
-<img src="image/Automation.drawio.png" width="250" /><br>
-`EventBridge`や`Config`をトリガーに`Systems Manager`のAutomationという機能が実行できます。<br>
-Configルールに違反していた際に、自動修復するなどの使い方ができます。<br><br>
-<img src="image/インベントリ.drawio.png" width="600" /><br>
-`Systems Manager`のインベントリという機能でで取得できるサーバーのインベントリも`Glue`と`Athena`を利用して、`Grafana`で可視化ができます。<br><br>
+「Session Manager」という機能を利用すれば、SSHポートを開かなくてもサーバーにログインでき、踏み台サーバーなしで、プライベートサブネット内のEC2インスタンスに接続することも可能です。<br>
+また、「Run Command」という機能では、サーバーにログインせずコマンドの実行が行えます。複数のサーバーに一括実行も可能です。<br>
+<img src="image/SessionManager.drawio.png" width="450" /><br><br>
+`EventBridge`や`Config`をトリガーに「Automation」という機能が実行できます。<br>
+Configルールに違反していた際に、自動修復するなどの使い方ができます。<br>
+<img src="image/Automation.drawio.png" width="250" /><br><br>
+「Inventory」という機能で取得できるサーバーのインベントリも`Glue`と`Athena`を利用して、`Grafana`で可視化ができます。<br>
+<img src="image/インベントリ.drawio.png" width="600" /><br><br>
+「Explorer」という機能ではAWSにおける様々な情報を一元化したダッシュボードを確認出来ます。<br>
 <img src="image/Explorer.drawio.png" width="600" /><br>
-`Systems Manager`のExplorerという機能ではAWSにおける様々な情報を一元化したダッシュボードを確認出来ます。
+
+以下`Systems Manager`の機能です。<br>
+
+|機能名|概要|
+|---|---|
+|Quick Setup|運⽤のベストプラクティスを簡単に展開
+|Explorer|ハイレベルの運⽤ダッシュボード|
+|OpsCenter|対応すべき運⽤アイテムの可視化、問題解決の⽀援|
+|Incident Manager|事前に準備された対応計画、ランブック、分析による改善|
+|Application Manager|個々のリソースだけでなく、アプリケーションを管理する|
+|AppConfig|アプリケーション構成を作成、管理、デプロイ|
+|Parameter Store|アプリケーション構成値の⼀元的な格納|
+|Change Manager|変更を安全に⾏うための承認ワークフローの⾃動化|
+|Automation|カスタム処理の⾃動化と修復アクション|
+|Change Calendar|⾃動処理のタイミング制御|
+|Maintenance Windows|同上|
+|Fleet Manager|ノードフリートの管理<br>Windows サーバーへのリモートデスクトップ機能|
+|Inventory|ノードのメタデータ可視化|
+|Session Manager|ノードへのセキュアな特権アクセス|
+|Run Command|ノードへの⼀括コマンド発⾏|
+|State Manager|フリート全体の設定管理ソリューション|
+|Patch Manager|パッチ適⽤を⾃動化|
+|Distributor|ソフトウェアのインストール・更新の⾃動化|
 
 ## **構築**
 AWS内のリソースは基本的に`CloudFormation(CFn)`で構築し、`CodeCommit`でバージョン管理します。<br>
