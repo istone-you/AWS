@@ -24,9 +24,10 @@
 
 ## **全体図**
 <img src="image/監視運用.drawio.png" width="100%"/><br>
-運用において使用するAWSサービスの全体図です。（あくまでも運用において使用するサービスの関係図なので、サーバーに関しては複数のEC2・ECSがあります。別途構成図で確認してください。）<br>
+運用において使用するAWSサービスの全体図です。（あくまでも運用における構成図なので、サーバーに関しては複数のEC2・ECSがあります。別途構成図で確認してください。）<br>
 複雑で分かりづらいかと思うので、詳細な構成図とともに細かく分けて説明します。AWSの基本的なサービスについても簡単に説明します。<br>
-また、実際は本番アカウントと監視アカウントで分かれているため、詳細な構成図にて図示しております。
+また、実際は本番アカウントと監視アカウントで分かれているため、詳細な構成図にて図示しております。<br>
+監視アカウントでは、他のアカウントの監視も行います。
 
 
 ## **監視ツール**
@@ -95,9 +96,10 @@ S3内のデータをSQLを利用して分析できるAWSのサービスです。
 `Prometheus`・`CloudWatch`・`Zabbix`からメトリクス、<br>
 `OpenSearch`からログ(＋セキュリティ関連のログ)、<br>
 `X-Ray`からトレース、<br>
-`Athena`からコストデータとサーバー情報を可視化します。<br>
+`Athena`からコストデータとサーバー情報を可視化します。<br><br>
 本番アカウントと監視アカウントを分けると以下のようになります。<br>
 <img src="image/Grafanaアカウント別.drawio.png" width="800"/><br>
+`Zabbix`に関しては別の`Grafana`になってしまうため、一元化出来てないですが、現在使用している`Zabbix`のバージョンが古く扱いづらいですし、可視化のツールとして`Grafana`は`Zabbix`より優秀なので、`Grafana`で可視化した方が監視しやすいかと考えています。
 
 ## **サーバー**
 AWSの仮想サーバーとサーバーにインストールするツールについて説明します。<br>
@@ -168,7 +170,7 @@ LinuxやWindowsなどの仮想サーバーを作成できるサービスです�
 
 ## **サーバー監視**
 サーバーの監視においてはメトリクス・ログ・トレースの3つの監視が重要になります。<br>
-- メトリクスはPrometheus Exporterから取得したものを`OpenTelemetry`で`Prometheus`に送信し、`Grafana`で可視化します、<br>
+- メトリクスはPrometheus Exporterから取得したものを`OpenTelemetry`で`Prometheus`に送信し、`Grafana`で可視化します。<br>
 - ログは`Fluentd`からAWSのサービスである`Kinesis Data Firehose`に送信することで、`S3`にリアルタイムストリーミングを行います。<br>
 `S3`から`Lambda`を利用して成形後、`OpenSearch`に送信・可視化し、`Grafana`に一元化します。<br>
 ※ここで使用する`Lambda`は[SIEM on Amazon OpenSearch Service](https://github.com/aws-samples/siem-on-amazon-opensearch-service)を使用しています。<br>
@@ -176,10 +178,12 @@ LinuxやWindowsなどの仮想サーバーを作成できるサービスです�
 
 ### EC2の監視
 <img src="image/EC2監視.drawio.png" width="100%"/><br>
+<img src="image/Fluentdのメトリクス.drawio.png" width="30%"/><br><br>
+`Fluentd`自体のメトリクスも`OpenTelemetry`で収集できます。<br>
 
 ### ECSの監視
 <img src="image/ECS監視.drawio.png" width="100%"/><br>
-`ECS`では、`OpenTelemetry`がECSのエージェントからコンテナのメトリクスを取得します。<br>
+`ECS`では、`OpenTelemetry`がECSのエージェントから各コンテナのメトリクスを取得します。<br>
 また、`ECS`においては`Fluentd`よりも`FluentBit`の利用が推奨されているため、`FluentBit`を使用します。<br>
 `ECS`にて用意されている`FireLens`というログドライバーを使用することで、自動で`FluentBit`のサイドカーコンテナが用意されます。<br>
 
