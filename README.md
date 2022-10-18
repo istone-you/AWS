@@ -24,473 +24,141 @@
 
 ## **全体図**
 <img src="image/監視運用.drawio.png" width="100%"/><br>
-運用において使用するAWSサービスの全体図です。（あくまでも運用における構成図なので、サーバーに関しては複数のEC2・ECSがあります。別途構成図で確認してください。）<br>
-複雑で分かりづらいかと思うので、詳細な構成図とともに細かく分けて説明します。AWSの基本的なサービスについても簡単に説明します。<br>
-また、実際は本番アカウントと監視アカウントで分かれているため、詳細な構成図にて図示しております。<br>
-監視アカウントでは、他のアカウントの監視も行います。
+運用において使用しているAWSサービスの全体図です。
+自分の頭の整理用の側面が強いのがあり、分かりづらいかと思うので、詳細な構成図とともに細かく分けて説明します。<br>
+また、実際は監視されるアカウント（複数）と監視アカウントで分かれています。
 
 
-## **監視ツール**
-監視において使用するOSS(オープンソースソフトウェア)とAWSサービスについて説明します。<br><br>
+## **OSS**
+運用と監視において使用しているOSS(オープンソースソフトウェア)は以下の通りです。<br><br>
 
-<img src="image/Prometheus.png" width="60"/><br>
-**Prometheus**<br>
-`Prometheus`はオープンソースのモニタリングツールで、CNCF(Cloud Native Computing Foundation)のgraduatedプロジェクトです。<br>
->CNCFとはクラウドネイティブコンピューティング技術を推進する非営利団体で、CNCFのGraduatedプロジェクトはCNCFにより「成熟した」と認められたプロジェクトのことです。有名な例だとKubernetesが挙げられます。<br>
+|<img src="image/Prometheus.png" width="60"/>|<img src="image/Cortex.png" width="60" />|<img src="image/Grafana.png" width="60"/>|<img src="image/OpenSearch.png" width="57"/>|<img src="image/FluentBit.jpg" width="70"/>|<img src="image/OpenTelemetry.png" width="60"/>|<img src="image/Ansible.png" width="60"/>|
+|---|---|---|---|---|---|---|
+|**Prometheus**|**Cortex**|**Grafana**|**OpenSearch**|**FluentBit**|**OpenTelemetry**|**Ansible**|
 
-Prometheus Exporterからデータを収集し、PromQLという専用クエリ言語でメトリクスデータを柔軟に表示できます。<br>
-`Grafana`が`Prometheus`の可視化ツールとしてよく利用されています。<br>
-デメリットとしてはストレージ設計や構築、運用管理にコストがかかったり、障害時の調査や復旧が難しい等があげられますが、AWSのマネージドサービスである`Amazon Managed Service for Prometheus(AMP)`を利用することでデメリットを解決できます。<br><br>
 
-<img src="image/AMP.png" width="60"/><br>
-**Amazon Managed Service for Prometheus(AMP)**<br>
-Prometheus との互換性を持つモニタリングサービスです。<br>
 
-<img src="image/Cortex.png" width="60" /><br>
-※`AMP`ではストレージにCNCFのIncubatingプロジェクトである`Cortex`が使用されていますが、`AMP`を使用する上ではストレージを意識する必要がないので、`Cortex`に関しても特に意識する必要はありません。<br><br>
-
-<img src="image/Grafana.png" width="60" /><br>
-**Grafana**<br>
-`Grafana`はオープンソースのデータ可視化ツールで、可視化に特化しているため、他プロダクトが独自で用意しているダッシュボードよりも時系列グラフの可視化自由度が高いです。<br>
-また、データソースとしてさまざまなデータを可視化できます。<br>
-デメリットとしてはストレージ設計や構築、運用管理にコストがかかる等があげられますが、
-AWSのマネージドサービスである`Amazon Managed Grafana(AMG)`を利用することでデメリットを解決できます。<br><br>
-
-<img src="image/AMG.png" width="60"/><br>
-**Amazon Managed Grafana(AMG)**<br>
-オープンソースの Grafana 向けのフルマネージドサービスです。<br><br>
-
-<img src="image/OpenSearch.png" width="57" /><br>
-**OpenSearch**<br>
-`OpenSearch`は`ElasticSearch`と`Kibana`から派生したオープンソースのツールで、AWSによって開発されました。<br>
-様々な形式のデータの収集・可視化が可能です。<br>
-AWSのマネージメントサービスである`Amazon OpenSearch Service`を使用します。<br><br>
-
-<img src="image/OpenSearchService.png" width="60"/><br>
-**Amazon OpenSearch Service**<br>
-AWS クラウドにおける `OpenSearch`クラスターのデプロイ、オペレーション、スケーリングを容易にするマネージドサービスです。<br>
-`ElasticSearch`もバージョン7.10までサポートされています。(バージョン7.10以降はオープンソースではなくなりました。)<br><br>
-
-<img src="image/ElasticSearch.png" height="60" />　　<img src="image/Kibana.png" height="58" /><br><br>
-※`ElasticSearch`はElastic社によって開発された全文検索エンジンでログの収集によく利用されています。<br>
-また、`Kibana`はElastic社によって開発された`ElasticSearch`の可視化ツールです。<br><br>
-
-<img src="image/CloudWatch.png" width="60" /><br>
-**CloudWatch**<br>
-AWSサービスのメトリクスとログを収集・可視化するAWSのサービスです。
-
-<img src="image/X-Ray.png" width="60" /><br>
-**X-Ray**<br>
-トレースを収集・可視化するAWSのサービスです。<br>
-
-<img src="image/Athena.png" width="60" /><br>
-**Athena**<br>
-S3内のデータをSQLを利用して分析できるAWSのサービスです。`Glue`というサービスでS3のデータのテーブルを作成し`Athena`にてSQLでの分析が出来るようにします。
 
 ### Grafanaによる可視化と一元化
-監視項目によってツールやサービスが分かれていると面倒なので`Grafana`のダッシュボードで出来るだけすべてを監視できるようにしています。<br>
-`Zabbix`のメトリクスも`Grafana`で確認することが可能です。<br>
-ただ`Grafana`ですべてが監視出来るわけではないので、詳細を知りたい際には各々のツールやサービスを確認することになると思います。<br>
-ダッシュボードで詳細が確認できるツール・サービスについては全体図にてダッシュボードマークをつけています。<br>
+監視項目によってツールやサービスが分かれていると面倒なので`Grafana`のダッシュボードで出来るだけすべてを監視できるようにしました。<br>
+
 <img src="image/Grafana.drawio.png" width="800"/><br>
 `Prometheus`・`CloudWatch`・`Zabbix`からメトリクス、<br>
 `OpenSearch`からログ(＋セキュリティ関連のログ)、<br>
 `X-Ray`からトレース、<br>
-`Athena`からコストデータとサーバー情報を可視化します。<br><br>
+`Athena`からコストデータとサーバー情報を可視化しています。<br><br>
 本番アカウントと監視アカウントを分けると以下のようになります。<br>
 <img src="image/Grafanaアカウント別.drawio.png" width="800"/><br>
-`Zabbix`に関しては別の`Grafana`になってしまうため、一元化出来てないですが、現在使用している`Zabbix`のバージョンが古く扱いづらいですし、可視化のツールとして`Grafana`は`Zabbix`より優秀なので、`Grafana`で可視化した方が監視しやすいかと考えています。
+オンプレで使用している`Zabbix`に関しても、バージョンが古く扱いづらいため、`Grafana`で可視化できるようにしていますが、Amazonの`Grafana`ではなく、オンプレにて別途`Grafana`を構築して使用します。<br>
 
-## **サーバー**
-AWSの仮想サーバーとサーバーにインストールするツールについて説明します。<br>
-<img src="image/サーバー.drawio.png" width="350" /><br>
-
-### **仮想サーバー**
-<img src="image/EC2.png" width="60" /><br>
-**EC2**<br>
-
-LinuxやWindowsなどの仮想サーバーを作成できるサービスです。<br>
-<img src="image/ECS.png" width="60" /><br>
-
-**ECS**<br>
-コンテナ化されたアプリケーションを簡単にデプロイ、管理、およびスケーリングできるサービスです。<br>
-タスク、サービス、クラスターと3つの概念がありますが、簡単に説明するとタスクがコンテナ、サービスでコンテナ（タスク）を管理し、クラスターはコンテナ（タスク）が実行されるインスタンス群のことです。<br>
-起動するサーバーのタイプには`EC2`と`Fargate`があり、どちらも使用しています。<br>
-
-<img src="image/Fargate.png" width="60" /><br>
-**Fargate**<br>
-`Fargate`を利用するとコンテナをサーバーレスで実行することができます。そのためインスタンスの管理が不要になります。<br>
-
-
-### **ツール**
-<img src="image/Fluentd.png" width="60" /><br>
-**Fluentd**<br>
-`Fluentd`はアプリケーションなどからログデータを収集し、フィルタリングして複数の宛先に送信できるオープンソースのツールで、CNCFのgraduatedプロジェクトです。<br>
-エクスポート先として様々なサービスが用意されており、数百のプラグインが利用可能です。AWSのサービスもエクスポート先としてサポートされています。<br><br>
-
-<img src="image/FluentBit.jpg" width="70" /><br>
-**FluentBit**<br>
-`FluentBit`は`Fluentd`の軽量版。<br>
-`ECS`ではこちらを使用します。<br><br>
-
-<img src="image/OpenTelemetry.png" width="60"/><br>
-**OpenTelemetry**<br>
-`OpenTelemetry`はクラウドネイティブアプリケーションとインフラストラクチャから「メトリクス」「トレース」のキャプチャと成形、エクスポートをするオープンソースのツールで、CNCFのIncubatingプロジェクトです。<br>
-`AWS Disto for OpenTelemetry(ADOT)`というAWSサポートのディストリビューションがあり、エクスポート先にAWSのサービスがサポートされています。<br><br>
-
-<img src="image/Prometheus.png" width="60" /><br>
-**Prometheus Exporter**<br>
-`Prometheus`用のメトリクスを収集するツールです。<br>
-様々な種類のExporterが用意されており、以下がその例です。<br>
-
-|||
-|---|---|
-|node_exporter|Linuxサーバの基本情報(topコマンド的な情報)を送信。|
-|windows_exporter|Windowsサーバの基本情報(タスクマネージャー的な情報)を送信。|
-|apache_exporter|Apacheの情報を送信。|
-|blackbox_exporter|HTTPやTCPなどを介したエンドポイント情報を送信。Webサービスの死活監視に利用。|
-|ssl_exporter|Webサーバに使用しているSSL証明書の情報を送信。SSL証明書の期限監視に便利。|
-
-<img src="image/CloudWatch.png" width="60" /><br>
-**CloudWatch Agent**<br>
-`CloudWatch`用のメトリクス、ログを収集するエージェントです。<br>
-基本的には`Prometheus`でメトリクスを収集しますが、`Auto Scaling`や`Compute Optimizer`では`CloudWatch`のメトリクスを利用するため、`CloudWatch`でも一部メトリクスを収集することになります。<br><br>
-
-<img src="image/SSM.png" width="60" /><br>
-**SSM Agent**<br>
-`Systems Manager`用のエージェントです。<br>
-インストールすることで、サーバーに対して`Systems Manager`の様々な機能が利用できます。<br><br>
-
-<img src="image/Ansible.png" width="60" /><br>
-**Ansible**<br>
-`Ansible`は多数のサーバーや複数のクラウドインフラを統一的に制御できるオープンソースの構成管理ツールです。<br>
-「Playbook」というファイルを利用して、サーバーに接続することなく、インストールや設定ファイルの更新等実行できます。<br>
-`Systems Manager`のRun Commandという機能で`Ansible`のインストールと「Playbook」の実行を行えます。<br>
-ドメイン登録の際のApacheの設定ファイルの編集などで利用します。<br><br>
 
 ## **サーバー監視**
-サーバーの監視においてはメトリクス・ログ・トレースの3つの監視が重要になります。<br>
-- メトリクスはPrometheus Exporterから取得したものを`OpenTelemetry`で`Prometheus`に送信し、`Grafana`で可視化します。<br>
-- ログは`Fluentd`からAWSのサービスである`Kinesis Data Firehose`に送信することで、`S3`にリアルタイムストリーミングを行います。<br>
-`S3`から`Lambda`を利用して成形後、`OpenSearch`に送信・可視化し、`Grafana`に一元化します。<br>
+サーバーの監視においてはobservabilityの3本の柱である、メトリクス・ログ・トレースの3つの監視を行っています。<br>
+- メトリクスはPrometheus Exporterから取得したものを`OpenTelemetry`で`Prometheus`に送信し、`Grafana`で可視化してます。<br>
+- ログは`Fluent Bit`からAWSのサービスである`Kinesis Data Firehose`に送信することで、`S3`にリアルタイムストリーミングを行います。<br>
+`S3`から`Lambda`を利用して成形後、`OpenSearch`に送信・可視化し、`Grafana`に一元化しています。<br>
 ※ここで使用する`Lambda`は[SIEM on Amazon OpenSearch Service](https://github.com/aws-samples/siem-on-amazon-opensearch-service)を使用しています。<br>
-- トレースは`OpenTelemetry`のSDKをアプリに導入することで、アプリから取得できるようになり、`OpenTelemetry`にて`X-Ray`用のデータに成形後、`X-Ray`に送信・可視化し、`Grafana`に一元化します。<br>
+- トレースは`OpenTelemetry`のSDKをアプリに導入することで、アプリから取得できるようになり、`OpenTelemetry`にて`X-Ray`用のデータに成形後、`X-Ray`に送信・可視化し、`Grafana`に一元化しています。<br>
 
 ### EC2の監視
 <img src="image/EC2監視.drawio.png" width="100%"/><br>
 <img src="image/Fluentdのメトリクス.drawio.png" width="30%"/><br><br>
-`Fluentd`自体のメトリクスも`OpenTelemetry`で収集できます。<br>
+`Fluent Bit`自体のメトリクスも`Prometheus`形式のメトリクスとして`Fluent Bit`から直接`OpenTelemetry`で収集しています。<br>
+また`Fluent Bit`に`Node Exporter` `Windows Exporter`としての機能も搭載されているので、LinuxやWindowsのメトリクスも収集します。<br>
 
 ### ECSの監視
 <img src="image/ECS監視.drawio.png" width="100%"/><br>
-`ECS`では、`OpenTelemetry`がECSのエージェントから各コンテナのメトリクスを取得します。<br>
-また、`ECS`においては`Fluentd`よりも`FluentBit`の利用が推奨されているため、`FluentBit`を使用します。<br>
-`ECS`にて用意されている`FireLens`というログドライバーを使用することで、自動で`FluentBit`のサイドカーコンテナが用意されます。<br>
+`ECS`では、`OpenTelemetry`がECSのエージェントからコンテナのメトリクスを取得します。<br>
+`ECS`にてログドライバーの`FireLens`を使用しています。<br>
 
 ### EC2・ECS以外のAWSサービスの監視
 <img src="image/その他AWSサービスの監視.drawio.png" width="650" /><br>
-`CloudWatch`のメトリクスは直接監視アカウントの`Grafana`で監視できます。<br>
-`CloudWatch`のログは`S3`と`OpenSearch`を経由して`Grafana`で監視できます。<br>
-`Lambda`のトレースも`X-Ray`で可視化でき、`CloudWatch`同様、直接監視アカウントの`Grafana`で監視できます。<br>
-
-## **ストレージ**
-<img src="image/S3.png" width="60" /><br>
-**S3**<br>
-AWSのオブジェクトストレージです。<br>
-`S3 Strage Lens`という`S3`の使用状況とアクティビティの傾向を可視化し、コスト効率化、データ保護に関するベストプラクティスに向けた推奨事項が提供されるダッシュボードサービスが利用できます。<br>
-
-<img src="image/EBS.png" width="60" /><br>
-**EBS**<br>
-`EC2`と組み合わせて使用できる、ブロックストレージです。<br>
-
-<img src="image/FSx.png" width="60" /><br>
-**FSx for Windows File Server**<br>
-Windows Server 上に構築されたフルマネージド共有ファイルストレージです。<br>
-
+`CloudWatch`のメトリクスは監視アカウントの`Grafana`で監視してます。<br>
+`CloudWatch`のログは`S3`と`OpenSearch`を経由して`Grafana`で監視してます。<br>
+`Lambda`等のトレースも`X-Ray`で取得し、`CloudWatch`同様、監視アカウントの`Grafana`で監視します。<br>
 
 ## **データベース**
-<img src="image/RDS.png" width="60" />　　<img src="image/PostgreSQL.png" width="60" /><br><br>
-**RDS**<br>
-リレーショナルデータベースのマネージドサービスです。<br>
-`PostgreSQL`を使用しています。<br>
-`RDS Performance Insights`というRDSのパフォーマンスを可視化したダッシュボードサービスが利用できます。<br>
+データベースは`PostgreSQL`と`MongoDB`を使用しています。<br><br>
 
-<img src="image/MongoDB.jpg" width="65" /><br>
-**MongoDB** on EC2<br>
-ドキュメント指向のNoSQLデータベースです。<br>
-AWSにて`DocumentDB`と呼ばれる`MongoDB`互換のサービスがありますが、`EC2`にて運用するようです。
+|<img src="image/PostgreSQL.png" width="60" />|<img src="image/MongoDB.jpg" width="65" />|
+|---|---|
+**PostgreSQL**|**MongoDB**|
+
 
 ## **セキュリティ**
-セキュリティに関しては以下のようにAWS内で様々なサービスが用意されています。<br>
-これらも可視化して監視できるようにしています。<br><br>
+セキュリティに関しても可視化して監視しています。<br><br>
 <img src="image/セキュリティ.drawio.png" width="100%"/><br>
-
-### **保護**<br>
-<img src="image/WAF.png" width="60" /><br>
-**WAF**<br>
-Webアプリケーションファイアウォールです。<br>
-ベンダー提供のマネージドルールとユーザー定義ルールを組み合わせて、保護の条件を指定します。<br>
-
-<img src="image/Shield.png" width="60" /><br>
-**Shield**<br>
-DDoS攻撃から保護します。<br>
-Standardは無料でAdvancedは有料。Advancedはより強力に攻撃から保護することができます<br>
-
-<img src="image/NetworkFirewall.png" width="60" /><br>
-**Network Firewall**<br>
-`VPC`向けのファイアーウォールです。<br>
-`Network ACL`や`Security Group`に比べてより高度なファイアウォールを実装できます。<br>
-
-<img src="image/NetworkACL.png" width="60" /><br>
-**Network ACL**<br>
-サブネット単位のファイアウォールです。<br>
-
-**Security Group**<br>
-インスタンス単位のファイアウォールです。<br>
-
-<img src="image/FirewallManager.png" width="60" /><br>
-**Firewall Manager**<br>
-`WAF` `Shield` `Network Firewall` `Network ACL` `Security Group`を一元化します。<br>
-
-<img src="image/KMS.png" width="60" /><br>
-**KMS**<br>
-暗号化操作に使用されるキーを簡単に作成および管理します。<br>
-
-<img src="image/SecretsManager.png" width="60" /><br>
-**Secrets Manager**<br>
-シークレットのローテーション、管理を行うサービス<br>
-
-### **検知**<br>
-<img src="image/CloudTrail.png" width="60" /><br>
-**CloudTrail**<br>
-AWSアカウントに対する操作のイベントログを記録するサービスです。<br>
-取得できる操作記録は「管理イベント」「データイベント」「インサイトイベント」の3種類です。<br>
-
-<img src="image/Config.png" width="60" /><br>
-**Config**<br>
-AWSリソースやEC2インスタンス、オンプレミスサーバーの設定の変更管理、変更履歴のモニタリングを行うためのサービスです。<br>
-また、設定に対するルールを指定でき、ルール違反した場合に`Systems Manager`のAutomationを実行させて、自動修復させることが出来ます。<br>
-
-<img src="image/FlowLog.png" width="60" /><br>
-**VPC Flow Log**<br>
-`VPC`内のIPトラフィック状況をログとして保存できる`VPC`の機能です。<br>
-
-<img src="image/AccessAnalyzer.png" width="60" /><br>
-**IAM Access Analyzer**<br>
-リソースのポリシーを確認して、意図せぬ公開設定などがされていないか検出し、可視化する機能です。<br>
-
-<img src="image/GuardDuty.png" width="60" /><br>
-**GuardDuty**<br>
-`CloudTrail`や`VPC Flow Log`からAWS上で発生する不正やセキュリティイベントなどの脅威を検出するサービスです。<br>
-
-<img src="image/Inspector.png" width="60" /><br>
-**Inspector**<br>
-SSMエージェントを導入したサーバーの脆弱性を検知するサービスです。<br>
-
-<img src="image/SecurityHub.png" width="60" /><br>
-**Security Hub**<br>
-`GuardDuty` `Inspector` `Detective` `IAM Access Analyzer` `Config`の検知内容を集約します。その他AWSでのセキュリティサービスや、サードパーティ製のセキュリティサービスの検知内容も集約できます。<br>
-また、べストプラクティスや業界標準に基づいた、継続的なAWS環境の自動チェックも行います。<br>
-
-<img src="image/TrustedAdvisor.png" width="60" /><br>
-**Trusted Adviser**<br>
-AWSのベストプラクティスの情報に基づいて、今設定されているものを自動的にをチェックし、推奨事項をレコメンドしてくれます。<br>
-コスト最適化、セキュリティ、耐障害性、パフォーマンス、サービスクォータの５つの項目のチェックを行います。セキュリティの項目では`Security Hub`の検知結果を表示できます。<br>
-
-### **調査**<br>
-<img src="image/Detective.png" width="60" /><br>
-**Detective**<br>
-`VPC Flow Log` `GuardDuty` `CloudTrail`から、
-潜在的なセキュリティ問題や不審なアクティビティを分析、調査します。<br>
 
 ### セキュリティログの可視化
 <img src="image/セキュリティログ.drawio.png" width="800"/><br>
-セキュリティログは`OpenSearch`に集約・可視化、`Grafana`に一元化します。<br>
+セキュリティログは`OpenSearch`に集約・可視化、`Grafana`に一元化しています。<br>
 
 ## **ネットワーク**
-<img src="image/VPC.png" width="60" /><br>
-**VPC**<br>
-AWS上に作成できるプライベート仮想ネットワーク空間です<br>
 
-<img src="image/DirectConnect.png" width="60" /><br>
-**DirectConnect**<br>
-AWS への専用ネットワーク接続です。さくらインターネットと接続しています。<br>
-<img src="image/VPN.png" width="60" /><br>
-社内サーバーとはVPN接続で接続しています。<br>
-
-<img src="image/Route53.png" width="60" /><br>
-**Route53**<br>
-AWSのDNSサービスです。ドメインのネームサーバーはこちらに移管済みです。<br><br>
+ドメインのネームサーバーをさくらインターネットから`Route53`に移管しました。<br><br>
 <img src="image/ドメイン登録.drawio.png" width="300" /><br>
-ドメイン登録からレコードのバックアップ、ApacheのConfファイルの編集までを実行できるアプリを作成しています。ApacheのConfファイルの編集の際のミスを無くせるかと思います。<br>
-バックアップに関しては、こちらのアプリを使用しないと実行できません。<br>
+また、サブドメインの登録業務が多いため、ドメイン登録からレコードのバックアップ、ApacheのConfファイルの編集までを実行できるWindowsアプリを作成しました。
+バックアップに関しては、AWSでは用意されていないので、こちらのアプリを使用しないと実行できません。<br>
 
-<img src="image/CLoudFront.png" width="60" /><br>
-**CloudFront**<br>
-コンテンツ配信ネットワーク (CDN) サービスです。<br>
-
-<img src="image/ELB.png" width="60" /><br>
-**ELB**<br>
-ロードバランシングを行うサービスです。<br><br>
 
 ### ネットワークの可視化
-これらサービスのメトリクスとログも可視化します。<br>
+ネットワークサービスのメトリクスとログも可視化してます。<br>
 <img src="image/ネットワーク.drawio.png" width="600" /><br>
 ネットワークに関するメトリクスは`CloudWatch`で可視化し、`Grafana`に一元化、<br>
-ネットワークに関するログは`OpenSearch`に集約・可視化、`Grafana`に一元化します。<br>
+ネットワークに関するログは`OpenSearch`に集約・可視化、`Grafana`に一元化しています。<br>
 
 ## **コスト管理**
-以下のサービスを利用して、コストの監視と最適化を行います<br>
 
-<img src="image/CostExplorer.png" width="60" /><br>
-**Cost Explorer**<br>
-AWSコストや使用料を可視化するダッシュボードサービスです。<br>
-AWSアカウントをまたいだ分析やコスト算出もできます。<br>
-
-<img src="image/Budgets.png" width="60" /><br>
-**Budgets**<br>
-AWSの使用料や予算額を管理するサービスです。<br>
-予算をオーバーした際のメール通知が可能です。<br>
-
-<img src="image/Cost&UsageReport.png" width="60" /><br>
-**Cost and Usage Report**<br>
-AWSのコストやリソースの使用状況を`S3`にアップロードします。<br>
-`Glue`と`Athena`を使ってETL処理を行い、`Grafana`で可視化します。<br>
-
-<img src="image/ComputeOptimizer.png" width="60" /><br>
-**Compute Optimizer**<br>
-`EC2`のCPU使用率などの利用状況を機械学習し、最適なインスタンスタイプを推奨してくれます。<br><br>
-
-### コストの可視化
 <img src="image/コスト管理.drawio.png" width="600" /><br>
-`Budgets`と`Cost & Usage Report`のデータは`Grafana`で可視化します。<br>
+`Budgets`と`Cost & Usage Report`のデータは`Grafana`で可視化しています。<br>
 
 ## **アカウント管理**
-`IAM Identity Center`と呼ばれるSingle Sign On（SSO）のサービスでログイン管理を行います。<br>
+`IAM Identity Center`でログイン管理を行っています。<br>
 <img src="image/アカウント管理.drawio.png" width="500" /><br>
-<img src="image/IAM.png" width="60" /><br>
-**IAM**<br>
-AWS のサービスおよびリソースへのアクセスを管理します。<br>
 
-<img src="image/Organization.png" width="60" /><br>
-**Organization**<br>
-複数のAWSアカウントを一元管理します。<br>
-
-<img src="image/SSO.png" width="60" /><br>
-**IAM Identity Center**<br>
-`IAM Identity Center`では複数のAWSアカウントと、`OpenSearch`、`Grafana`のログインを一元管理出来ます。<br>
 
 ## **運用の自動化**
-以下のサービスを利用して、運用を出来るだけ自動化させます。<br>
-これらサービスのメトリクスも`CloudWatch`で取得できるので、自動化が失敗していないかどうか等の監視も行えます。<br>
+AWSの運用は`Lambda` `EventBridge` `SNS` `SystemsManager`等使って出来るだけ自動化させてます。<br>
 
-<img src="image/Lambda.png" width="60" /><br>
-**Lambda**<br>
-コードをサーバーなしで実行できるサービスで、運用においても様々なLambda関数を利用します。<br>
-言語はPythonかNode.jsが主流なので、現段階ではこれらの言語を使用しています。<br><br>
+`EventBridge`や`SNS`をトリガーにしてLambda関数を実行しています。<br>
 <img src="image/Lambda.drawio.png" width="250" /><br>
-`EventBridge`や`SNS`をトリガーにして関数を実行でき、他にも様々なサービスをトリガーに出来ます。<br>
 
-<img src="image/SNS.png" width="60" /><br>
-**SNS**<br>
-メールの送信だけでなく、`Lambda`の実行も行えるため、アラートに対しての自動対応が可能です。<br>
-これを利用して、`SNS`の通知をTeamsに送信するようなLambda関数も作成しています。<br><br>
+様々なサービスから`SNS`にアラートを送信してます。<br>
 <img src="image/SNS.drawio.png" width="250" /><br>
-様々なサービスから`SNS`にアラートを送信できます。
 
-<img src="image/EventBridge.png" width="60" /><br>
-**EventBridge**<br>
-AWSのイベントやスケジュールを検知し、`Lambda`や`SystemsManager`のAutomation、Run Commandの実行、`SNS`を利用してのメール通知を行います。<br>
-AWSでのイベントをトリガーにした自動処理を行えます。<br>
+`EventBridge`を利用して、`Lambda`や`SystemsManager`のAutomation、Run Commandの実行、`SNS`を利用してのメール通知を行っています。<br>
 <img src="image/EventBridge.drawio.png" width="350" /><br>
 
-<img src="image/AutoScaling.png" width="60" /><br>
-**Auto Scaling**<br>
-CloudWatchアラームをトリガーにインスタンスを自動でスケーリングします。<br>
+CloudWatchアラームをトリガーにインスタンスを自動でスケーリングしてます。<br>
 <img src="image/AutoScaling.drawio.png" width="550" /><br>
 
-<img src="image/Backup.png" width="60" /><br>
-**Backup**<br>
-様々なAWSサービスのバックアップのスケジュール管理やバックアップの保持期間の管理、バックアップに対するアクセスポリシーの設定を一元管理できます。<br>
+`Backup`を利用して様々なAWSサービスのバックアップのスケジュール管理やバックアップの保持期間の管理、バックアップに対するアクセスポリシーの設定を一元管理しています。<br>
 <img src="image/Backup.drawio.png" width="500" /><br>
 
-<img src="image/DevOpsGuru.png" width="60" /><br>
-**DevOps Guru**<br>
-機械学習を使用して異常な動作パターンを検出するサービスです。<br>
+`DevOps Guru`の機械学習を利用して`CloudWatch` `Config` `CLoudFormation` `X-Ray` `Systems Manager OpsCenter`の異常を検知しています。<br>
 <img src="image/DevOpsGuru.drawio.png" width="350" /><br>
-`CloudWatch` `Config` `CLoudFormation` `X-Ray` `Systems Manager OpsCenter`が`DevOps Guru`で異常を検知できるサービスです。<br>
 
-<img src="image/SSM.png" width="60" /><br>
-**System Manager(SSM)**<br>
-複数のサーバーに一括でコマンドを実行、複数の処理を一括実行、
-サーバー上で稼働するソフトウェアの一覧を表示したりと、運用に関する複数の機能が用意されています。<br>
-SSM Agentをサーバーに導入することで利用できます。オンプレのサーバーにも利用可能です。<br><br>
-「Session Manager」という機能を利用すれば、SSHポートを開かなくてもサーバーにログインでき、踏み台サーバーなしで、プライベートサブネット内のEC2インスタンスに接続することも可能です。<br>
-また、「Run Command」という機能では、サーバーにログインせずコマンドの実行が行えます。複数のサーバーに一括実行も可能です。<br>
-「Session Manager」と「Run Command」はオンプレのサーバーでも実行できます。<br>
-<img src="image/SessionManager.drawio.png" width="650" /><br><br>
-`EventBridge`や`Config`をトリガーに「Automation」という機能が実行できます。<br>
-Configルールに違反していた際に、自動修復するなどの使い方ができます。<br>
+
+誰かがルールに反した操作を行った際は、`EventBridge`か`Config`で検知し、`Systems Manager Automation`を利用して自動修復をするようにしています。<br>
 <img src="image/Automation.drawio.png" width="250" /><br><br>
-「Inventory」という機能で取得できるサーバーのインベントリも`Glue`と`Athena`を利用して、`Grafana`で可視化ができます。<br>
+`Systems Manager Inventory`で取得できるサーバーのインベントリも`Glue`と`Athena`を利用して、`Grafana`で可視化をしてます。<br>
 <img src="image/インベントリ.drawio.png" width="600" /><br><br>
-「Explorer」という機能ではAWSにおける様々な情報を一元化したダッシュボードを確認出来ます。<br>
-<img src="image/Explorer.drawio.png" width="600" /><br>
+`Grafana`だけでなく、Systems Manager ExplorerでAWSにおける様々な情報を一元化したダッシュボードを利用しています。<br>
+<img src="image/Explorer.drawio.png" width="600" /><br><br>
 
-以下`Systems Manager`の機能です。<br>
 
-|機能名|概要|
-|---|---|
-|Quick Setup|運⽤のベストプラクティスを簡単に展開
-|Explorer|ハイレベルの運⽤ダッシュボード|
-|OpsCenter|対応すべき運⽤アイテムの可視化、問題解決の⽀援|
-|Incident Manager|事前に準備された対応計画、ランブック、分析による改善|
-|Application Manager|個々のリソースだけでなく、アプリケーションを管理する|
-|AppConfig|アプリケーション構成を作成、管理、デプロイ|
-|Parameter Store|アプリケーション構成値の⼀元的な格納|
-|Change Manager|変更を安全に⾏うための承認ワークフローの⾃動化|
-|Automation|カスタム処理の⾃動化と修復アクション|
-|Change Calendar|⾃動処理のタイミング制御|
-|Maintenance Windows|同上|
-|Fleet Manager|ノードフリートの管理<br>Windows サーバーへのリモートデスクトップ機能|
-|Inventory|ノードのメタデータ可視化|
-|Session Manager|ノードへのセキュアな特権アクセス|
-|Run Command|ノードへの⼀括コマンド発⾏|
-|State Manager|フリート全体の設定管理ソリューション|
-|Patch Manager|パッチ適⽤を⾃動化|
-|Distributor|ソフトウェアのインストール・更新の⾃動化|
 
 ## **構築**
-AWS内のリソースは基本的に`CloudFormation(CFn)`で構築し、`CodeCommit`でバージョン管理します。<br>
+AWS内のリソースは基本的に`CloudFormation(CFn)`で構築し、`CodeCommit`でバージョン管理しています。<br>
 `CloudFormation(CFn)`を利用することで、AWSリソースをコードで管理できるので、現状を把握しやすくなりますし、<br>
 `CodeCommit`を利用することで、変更差分がわかりやすく残るので、作業履歴として利用できます。<br>
-さらに、`CodeBuild`と`CodePipline`を利用して、コミットから構築までを自動化させます。<br><br>
-<img src="image/CFn.png" width="60" /><br>
-**CloudFormation**<br>
-コードでAWSリソースを構築するサービスです。<br>
+さらに、`CodeBuild`と`CodePipline`を利用して、コミットから構築までを自動化させています。<br><br>
 
-<img src="image/CodeCommit.png" width="60" /><br>
-**CodeCommit**<br>
-AWSのプライベートGitリポジトリです。<br>
-
-<img src="image/CodeBuild.png" width="60" /><br>
-**CodeBuild**<br>
-AWSマネージドのビルドサービスです。<br>
-CloudFormationテンプレートの構文が正しいかテストを実行します。<br>
-
-<img src="image/CodePipeline.png" width="60" /><br>
-**CodePipeline**<br>
-マネージド型の継続的デリバリーサービスで、`CodeCommit`から`CodeBuild`、`CloudFormation`の変更スタック作成までを、自動化します。<br>
 
 <img src="image/構築.drawio.png" width="500" /><br>
 
-`CloudFormation(CFn)`のテンプレートを`CodeCommit`にコミットすると、
-`CodePipline`により`CodeBuild`でテストされ、`CloudFormation`が実行されます。<br><br>
-
-同様に`Lambda`のコードを`CodeCommit`にコミットすると、`CodePipline`により`CodeBuild`でテストされ、`Serverless Application Model(SAM)`によって`CloudFormation`が実行され、作成された`Lambda`にコードのデプロイを行います。<br><br>
-
-<img src="image/SAM.jpg" height="75" /><br>
-**Serverless Application Model(SAM)**<br>
-AWS でサーバーレスアプリケーション を構築するために使用できるオープンソースのフレームワークです。<br>
-`CloudFormation`を利用したAWSリソースの作成と、Lambda関数のデプロイを実行します。<br>
+`Lambda`の構築・デプロイには`SAM(Serverless Application Model)`を利用しています。<br>
+|<img src="image/SAM.jpg" height="75" />|
+|---|
+|**SAM**|
 
