@@ -3,7 +3,7 @@
 ## **全体図**
 <img src="image/監視運用.drawio.png" width="100%"/><br>
 運用において使用しているAWSサービスの全体図です。
-自分の頭の整理用の側面が強いのがあり、分かりづらいかと思うので、詳細な構成図とともに細かく分けて説明します。<br>
+分かりづらいかと思うので、詳細な構成図とともに細かく分けて説明します。<br>
 また、実際は監視されるアカウント（複数）と監視アカウントで分かれています。
 
 
@@ -14,8 +14,12 @@
 |---|---|---|---|---|---|---|
 |**Prometheus**|**Cortex**|**Grafana**|**OpenSearch**|**FluentBit**|**OpenTelemetry**|**Ansible**|
 
+## **AWSマネージドサービスの利用** ##
+よく使われているOSSで監視の構築をすると、このような構成になりますが、<br>
+<img src="image/Observability.drawio.png" width="400" /><br>
 
-
+AWSのマネージドサービスを利用する事で、出来るだけ運用や管理が楽になるようにしています。<br>
+<img src="image/Observability(AWS).drawio.png" width="400" /><br>
 
 ### Grafanaによる可視化と一元化
 監視項目によってツールやサービスが分かれていると面倒なので`Grafana`のダッシュボードで出来るだけすべてを監視できるようにしました。<br>
@@ -136,6 +140,7 @@ AWS内のリソースは基本的に`CloudFormation(CFn)`で構築し、`CodeCom
 <img src="image/構築.drawio.png" width="500" /><br>
 
 `Lambda`の構築・デプロイには`SAM(Serverless Application Model)`を利用しています。<br>
+
 |<img src="image/SAM.jpg" height="75" />|
 |---|
 |**SAM**|
