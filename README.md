@@ -4,7 +4,8 @@
 <img src="image/監視運用.drawio.png" width="100%"/><br>
 運用において使用しているAWSサービスの全体図です。
 分かりづらいかと思うので、詳細な構成図とともに細かく分けて説明します。<br>
-また、実際は監視されるアカウント（複数）と監視アカウントで分かれています。
+また、実際は監視されるアカウント（複数）と監視アカウントで分かれています。[別の案件](HP案件/README.md)で使用しているAWSアカウントの監視も行っています。<br>
+
 
 
 ## **OSS**
@@ -12,7 +13,7 @@
 
 |<img src="image/Prometheus.png" width="60"/>|<img src="image/Cortex.png" width="60" />|<img src="image/Grafana.png" width="60"/>|<img src="image/OpenSearch.png" width="57"/>|<img src="image/FluentBit.jpg" width="70"/>|<img src="image/OpenTelemetry.png" width="60"/>|<img src="image/Ansible.png" width="60"/>|
 |---|---|---|---|---|---|---|
-|**Prometheus**|**Cortex**|**Grafana**|**OpenSearch**|**FluentBit**|**OpenTelemetry**|**Ansible**|
+|**[Prometheus](https://prometheus.io/docs/introduction/overview/)**|**[Cortex](https://cortexmetrics.io/docs/)**|**[Grafana](https://grafana.com/docs/grafana/latest/)**|**[OpenSearch](https://opensearch.org/docs/latest/)**|**[FluentBit](https://docs.fluentbit.io/manual/)**|**[OpenTelemetry](https://aws-otel.github.io/)**|**[Ansible](https://docs.ansible.com/)**|
 
 ## **AWSマネージドサービスの利用** ##
 よく使われているOSSで監視の構築をすると、このような構成になりますが、<br>
@@ -37,16 +38,24 @@ AWSのマネージドサービスを利用する事で、出来るだけ運用�
 ## **サーバー監視**
 サーバーの監視においてはobservabilityの3本の柱である、メトリクス・ログ・トレースの3つの監視を行っています。<br>
 - メトリクスはPrometheus Exporterから取得したものを`OpenTelemetry`で`Prometheus`に送信し、`Grafana`で可視化してます。<br>
-- ログは`Fluent Bit`からAWSのサービスである`Kinesis Data Firehose`に送信することで、`S3`にリアルタイムストリーミングを行います。<br>
+- ログは`Fluent Bit`から`S3`に送信。<br>
 `S3`から`Lambda`を利用して成形後、`OpenSearch`に送信・可視化し、`Grafana`に一元化しています。<br>
 ※ここで使用する`Lambda`は[SIEM on Amazon OpenSearch Service](https://github.com/aws-samples/siem-on-amazon-opensearch-service)を使用しています。<br>
 - トレースは`OpenTelemetry`のSDKをアプリに導入することで、アプリから取得できるようになり、`OpenTelemetry`にて`X-Ray`用のデータに成形後、`X-Ray`に送信・可視化し、`Grafana`に一元化しています。<br>
 
+### **SIEM on Amazon OpenSearch Serviceとは** ###
+<img src="image/siem-architecture.png" width="550"/><br>
+>SIEM は Security Information and Event Management の略で、セキュリティ機器、ネットワーク機器、その他のあらゆる機器のデータを収集及び一元管理をして、相関分析によって脅威検出とインシデントレスポンスをサポートするためのソリューションです。OpenSearch Service は、オープンソースの OpenSearch と OpenDashboards を大規模かつ簡単でコスト効率の良い方法を使用してデプロイ、保護、実行する完全マネージド型サービスです。OpenSearch Service の環境に SIEM として必要な機能を実装したのが SIEM on Amazon OpenSearch Service  です。
+
+※[SIEM on Amazon OpenSearch Service Workshop](https://catalog.us-east-1.prod.workshops.aws/workshops/60a6ee4e-e32d-42f5-bd9b-4a2f7c135a72/ja-JP/01-introduction)より引用。
+
 ### EC2の監視
 <img src="image/EC2監視.drawio.png" width="100%"/><br>
-<img src="image/Fluentdのメトリクス.drawio.png" width="30%"/><br><br>
+<img src="image/Fluentdのメトリクス.drawio.png" width="32%"/><br><br>
 `Fluent Bit`自体のメトリクスも`Prometheus`形式のメトリクスとして`Fluent Bit`から直接`OpenTelemetry`で収集しています。<br>
-また`Fluent Bit`に`Node Exporter` `Windows Exporter`としての機能も搭載されているので、LinuxやWindowsのメトリクスも収集します。<br>
+また`Fluent Bit`に`Node Exporter` `Windows Exporter`としての機能も搭載されているので、LinuxやWindowsのメトリクスも収集します。<br><br>
+<img src="image/Otelのログ.drawio.png" width="32%"/><br><br>
+`OpenTelemetry`自体のログも`Fluent Bit`で収集できます。<br>
 
 ### ECSの監視
 <img src="image/ECS監視.drawio.png" width="100%"/><br>
@@ -85,7 +94,7 @@ AWSのマネージドサービスを利用する事で、出来るだけ運用�
 
 ### ネットワークの可視化
 ネットワークサービスのメトリクスとログも可視化してます。<br>
-<img src="image/ネットワーク.drawio.png" width="600" /><br>
+<img src="image/ネットワーク.drawio.png" width="700" /><br>
 ネットワークに関するメトリクスは`CloudWatch`で可視化し、`Grafana`に一元化、<br>
 ネットワークに関するログは`OpenSearch`に集約・可視化、`Grafana`に一元化しています。<br>
 
