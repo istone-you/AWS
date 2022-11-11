@@ -44,6 +44,8 @@ service:
       processors: [filter]
       exporters: [prometheusremotewrite]
 ```
+AMPのリモート書き込みURLはAMPのマネジメントコンソール画面で確認できます。<br>
+<img src="img/amp-endpoint.png" width="100%"/><br><br>
 
 次にDockerfileを用意します。<br>
 ```Dockerfile

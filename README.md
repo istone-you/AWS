@@ -67,6 +67,13 @@ AWSのマネージドサービスを利用する事で、出来るだけ運用�
 `CloudWatch`のログは`S3`と`OpenSearch`を経由して`Grafana`で監視してます。<br>
 `Lambda`等のトレースも`X-Ray`で取得し、`CloudWatch`同様、監視アカウントの`Grafana`で監視します。<br>
 
+## **Webサーバー**
+Webサーバーには`Apache HTTP Server`を使用し、構築からチューニングまで行いました。<br><br>
+
+|<img src="image/apache.png" width="40" />|
+|---|
+**Apache**|
+
 ## **データベース**
 データベースは`PostgreSQL`と`MongoDB`を使用しています。<br><br>
 
@@ -114,7 +121,10 @@ AWSの運用は`Lambda` `EventBridge` `SNS` `SystemsManager`等使って出来�
 <img src="image/Lambda.drawio.png" width="250" /><br>
 
 様々なサービスから`SNS`にアラートを送信してます。<br>
-<img src="image/SNS.drawio.png" width="250" /><br>
+<img src="image/SNS.drawio.png" width="350" /><br>
+
+上記二つを組み合わせ、`Grafana`から`SNS`に送信されたアラートを元に`Lambda`を起動して、`Systems Manager Run Command`を実行することで、メトリクスやログをもとにインスタンスにコマンドを自動実行するようにしています。<br>
+<img src="image/RunCommand.drawio.png" width="400" /><br>
 
 `EventBridge`を利用して、`Lambda`や`SystemsManager`のAutomation、Run Commandの実行、`SNS`を利用してのメール通知を行っています。<br>
 <img src="image/EventBridge.drawio.png" width="350" /><br>

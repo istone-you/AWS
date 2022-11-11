@@ -29,7 +29,7 @@ AWSDistroOtel-Collectorを選択します。<br>
 
 `AWSOTelCollector`フォルダの中にある`config.yaml`がADOTの設定ファイルです。
 以下の様に設定ファイルを編集します。
-```
+```yaml
 receivers:
   prometheus:
     config:
@@ -41,8 +41,14 @@ receivers:
         static_configs:
         # Exporterのポート番号を下記のように記載
         - targets: [ localhost:2021 ] # Fluent Bit
-        - targets: [ localhost:9182 ] # Windows Exporter
+          labels:
+            server: 'solamame'        # サーバー名
+        - targets: [ localhost:9100 ] # Node Exporter
+          labels:
+            server: 'solamame'        # サーバー名
         - targets: [ localhost:9117 ] # Apache Exporter
+          labels:
+            server: 'solamame'        # サーバー名
 processors:
   filter:
     metrics:
@@ -80,7 +86,9 @@ service:
       processors: [filter]
       exporters: [prometheusremotewrite]
 ```
-AMPの作成については[こちら](AMP.md)、IAMロールの作成については[こちら](IAM(AMP).md)を確認してください。<br><br><br>
+AMPの作成については[こちら](AMP.md)、IAMロールの作成については[こちら](IAM(AMP).md)を確認してください。<br>
+AMPのリモート書き込みURLはAMPのマネジメントコンソール画面で確認できます。<br>
+<img src="img/amp-endpoint.png" width="100%"/><br><br>
 設定が完了したら、PowerShellでADOTを起動します。
 ```
 PS> & '.\aws-otel-collector-ctl.ps1' -a start

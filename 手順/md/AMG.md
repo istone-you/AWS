@@ -9,7 +9,7 @@ GrafanaのAWSマネージドサービスである、Amazon Managed Grafana(AMG)�
 <img src="img/AMG作成.png" width="100%"/><br>
 
 認証アクセスのAWS IAM IDセンターにチェックを入れて、次へをクリックします。<br>
-※AWS IAM IDセンターの作成については[こちら](SSO.md)を参照。
+※IAM Identity Centerの作成については[こちら](SSO.md)を参照。
 
 <img src="img/認証アクセス.png" width="100%"/><br>
 

@@ -61,11 +61,21 @@
 
 ## **Grafanaの設定**
 <img src="img/Grafana.drawio.png" width="100%"/><br>
-最後にGrafanaの導入方法と設定方法についての手順を説明いたします。<br><br><br>
 
+Grafanaの導入方法と設定方法についての手順を説明いたします。<br><br><br>
 **①[Amazon Managed Grafanaの作成](md/AMG.md)**<br><br>
 **②[データソースの設定(Prometheus)](md/AMG(AMP).md)**<br><br>
 **③[データソースの設定(CloudWatch)](md/AMG(CW).md)**<br><br>
 **④[データソースの設定(X-Ray)](md/AMG(XRay).md)**<br><br>
 **⑤[データソースの設定(OpenSearch)](md/AMG(OS).md)**<br><br>
 **⑥[データソースの設定(Athena)](md/AMG(Athena).md)**<br><br>
+
+## **アラートの設定**
+Grafanaにてメトリクスやログのアラートを発報し、メールを送信したりコマンドを実行する手順です。<br>
+流れとしては以下の画像の通りです。<br><br>
+<img src="img/Grafanaアラート.drawio.png" width="70%"/><br>
+それぞれの導入方法と設定方法についての手順を説明いたします。<br><br><br>
+
+**①[Amazon Managed Grafanaでのアラート設定](md/AMGアラート.md)**<br><br>
+**②[SNS](md/SNS.md)**<br><br>
+**③[Lambda](md/Lambda.md)**<br><br>
