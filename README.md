@@ -1,4 +1,4 @@
-# AWSの運用構成
+# **AWSの運用構成**
 
 ## **全体図**
 <img src="image/監視運用.drawio.png" width="100%"/><br>
@@ -53,9 +53,7 @@ AWSのマネージドサービスを利用する事で、出来るだけ運用�
 <img src="image/EC2監視.drawio.png" width="100%"/><br>
 <img src="image/Fluentdのメトリクス.drawio.png" width="32%"/><br><br>
 `Fluent Bit`自体のメトリクスも`Prometheus`形式のメトリクスとして`Fluent Bit`から直接`OpenTelemetry`で収集しています。<br>
-また`Fluent Bit`に`Node Exporter` `Windows Exporter`としての機能も搭載されているので、LinuxやWindowsのメトリクスも収集します。<br><br>
-<img src="image/Otelのログ.drawio.png" width="32%"/><br><br>
-`OpenTelemetry`自体のログも`Fluent Bit`で収集できます。<br>
+また`Fluent Bit`に`Node Exporter` `Windows Exporter`としての機能も搭載されているので、`Node Exporter`と`Windows Exporter`をインストールする必要はありません。<br><br>
 
 ### ECSの監視
 <img src="image/ECS監視.drawio.png" width="100%"/><br>
@@ -77,7 +75,7 @@ AWSのマネージドサービスを利用する事で、出来るだけ運用�
 
 
 ## **セキュリティ**
-セキュリティに関しても可視化して監視しています。<br><br>
+セキュリティにおいても様々なAWSサービスを使っており、それらのログを可視化して監視しています。<br><br>
 <img src="image/セキュリティ.drawio.png" width="100%"/><br>
 
 ### セキュリティログの可視化
