@@ -69,41 +69,18 @@ Dockerfileとconfig.yamlを同じフォルダに配置してコンテナイメ�
 下記内容を追加します。
 ```json
 {
-  "family": "adot-prom",
-  "networkMode": "awsvpc",
-  "containerDefinitions": [
-    {
-      "name": "adot-collector",
-      "image": "先ほどECRにプッシュしたADOTのイメージのURI",
-      "essential": true,
-      "logConfiguration": {
-        "logDriver": "awslogs",
-        "options": {
-          "awslogs-group": "/ecs/ecs-adot-collector",
-          "awslogs-region": "my-region",
-          "awslogs-stream-prefix": "ecs",
-          "awslogs-create-group": "True"
-        }
-      }
-    },
-    {
-      "name": "prometheus",
-      "image": "prom/prometheus:main",
-      "logConfiguration": {
-        "logDriver": "awslogs",
-        "options": {
-          "awslogs-group": "/ecs/ecs-prom",
-          "awslogs-region": "my-region",
-          "awslogs-stream-prefix": "ecs",
-          "awslogs-create-group": "True"
-        }
-      }
+  "name": "adot-collector",
+  "image": "先ほどECRにプッシュしたADOTのイメージのURI",
+  "essential": false,
+  "logConfiguration": {
+    "logDriver": "awslogs",
+    "options": {
+      "awslogs-group": "/ecs/ecs-adot-collector",
+      "awslogs-region": "my-region",
+      "awslogs-stream-prefix": "ecs",
+      "awslogs-create-group": "True"
     }
-  ],
-  "requiresCompatibilities": [
-    "FARGATE"
-  ],
-  "cpu": "1024"
+  }
 }
 ```
 

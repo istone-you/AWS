@@ -69,6 +69,13 @@ Fluent Bitの設定ファイルの指定が必要なので、`JSONによる設�
  },
 ```
 
+`essential`を`false`にすることでFluent Bitのコンテナが終了しても、アプリコンテナが終了しないようにします。
+```diff
+- "essential": true,
++ "essential": false,
+```
+
+
 タスクロールにポリシー`AmazonS3FullAccess` `CloudWatchLogsFullAccess`をアタッチします。<br><br><br>
 
 サービス更新をしてタスクを起動し直して、`log_router`コンテナが`RUNNING`になっていれば完了です。

@@ -34,21 +34,19 @@ receivers:
   prometheus:
     config:
       global:
-        scrape_interval: 1m
+        scrape_interval: 15s
         scrape_timeout: 10s
       scrape_configs:
-      - job_name: "prometheus"
+      - job_name: "fluent-bit"
         static_configs:
-        # Exporterのポート番号を下記のように記載
         - targets: [ localhost:2021 ] # Fluent Bit
           labels:
-            server: 'solamame'        # サーバー名
-        - targets: [ localhost:9100 ] # Node Exporter
+            server: 'solamame'        # サーバー名を入力
+      - job_name: "windows-exporter"
+        static_configs:
+        - targets: [ localhost:9182 ] # Windows Exporter
           labels:
-            server: 'solamame'        # サーバー名
-        - targets: [ localhost:9117 ] # Apache Exporter
-          labels:
-            server: 'solamame'        # サーバー名
+            server: 'solamame'        # サーバー名を入力
 processors:
   filter:
     metrics:
@@ -82,7 +80,7 @@ service:
   extensions: [pprof, zpages, health_check, sigv4auth]
   pipelines:
     metrics:
-      receivers: [awsecscontainermetrics]
+      receivers: [prometheus]
       processors: [filter]
       exporters: [prometheusremotewrite]
 ```

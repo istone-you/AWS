@@ -16,7 +16,10 @@
 **②[AWS Distro for OpenTelemetry (Linux)](md/ADOT(Linux).md)** / **[AWS Distro for OpenTelemetry (Windows)](md/ADOT(Windows).md)** / **[AWS Distro for OpenTelemetry (ECS)](md/ADOT(ECS).md)**<br><br>
 **③[IAM Role](md/IAM(AMP).md)** <br><br>
 **④[Amazon Managed Service for Prometheus](md/AMP.md)**<br><br>
-**⑤[Amazon Managed Grafana](#grafanaの設定)**
+**⑤[Amazon Managed Grafana](#grafanaの設定)**<br><br>
+
+<a href="img/Grafanaアラート(EC2)メトリクス.drawio.png" target="_blank"><img src="img/Grafanaアラート(EC2)メトリクス.drawio.png" width="100%"/></a><br>
+※クリックで画像表示<br>
 
 ## **ログの取得手順**
 ログの取得から可視化までの手順です。<br>
@@ -28,7 +31,10 @@
 **②[IAM Role](md/IAM(S3).md)**<br><br>
 **③[SIEM on OpenSearch Serviceのインストール](md/SIEM.md)**<br><br>
 **④[SIEM on OpenSearch Serviceの設定](md/SIEM(設定).md)**<br><br>
-**⑤[Amazon Managed Grafana](#grafanaの設定)**
+**⑤[Amazon Managed Grafana](#grafanaの設定)**<br><br>
+
+<a href="img/Grafanaアラート(EC2)ログ.drawio.png" target="_blank"><img src="img/Grafanaアラート(EC2)ログ.drawio.png" width="100%"/></a><br>
+※クリックで画像表示<br>
 
 ## **トレースの取得手順**
 トレースの取得から可視化までの手順です。<br>
@@ -38,7 +44,10 @@
 それぞれの導入方法と設定方法についての手順を説明いたします。<br><br><br>
 **①[OpenTelemtry SDK(C#)](md/OtelSDK(C#).md)** / **[OpenTelemtry SDK(PHP)](md/OtelSDK(PHP).md)**<br><br>
 **②[AWS Distro for OpenTelemetry](md/ADOT(トレース).md)**<br><br>
-**③[Amazon Managed Grafana](#grafanaの設定)**
+**③[Amazon Managed Grafana](#grafanaの設定)**<br><br>
+
+<a href="img/Grafanaアラート(EC2)トレース.drawio.png" target="_blank"><img src="img/Grafanaアラート(EC2)トレース.drawio.png" width="100%"/></a><br>
+※クリックで画像表示<br>
 
 ## **セキュリティログの取得手順**
 セキュリティログの取得から可視化までの手順です。<br>

@@ -6,5 +6,9 @@ Windowsのシステムメトリクスを取得するPrometheus Exporterである
 
 下記コマンドで、Windows Exporterをサービス登録します。
 ```
-C:¥>sc create "WIndows Exporter" binPath= "Windows Exporterのexeファイルのパス --collectors.enabled "[defaults],process,vmware"" start= auto
+C:¥>sc create "Windows Exporter" binPath=  "C:\Users\Administrator\Desktop\windows_exporter-0.20.0-amd64.exe --collectors.enabled [defaults],process,scheduled_task,vmware --collector.service.services-where=\"Name='サービス名' OR Name='サービス名'\" --collector.process.whitelist=\"(プロセス名^|プロセス名).*\" --collector.scheduled_task.whitelist=\"(タスクのパス^|タスクのパス).*\"start= auto
+```
+例）
+```
+C:¥>sc create "Windows Exporter" binPath=  "C:\Users\Administrator\Desktop\windows_exporter-0.20.0-amd64.exe --collectors.enabled [defaults],process,scheduled_task,vmware --collector.service.services-where=\"Name='windows_exporter' OR Name='fluent-bit' OR Name='awsotelcollector'\" --collector.process.whitelist=\"(windows_exporter-0.20.0-amd64^|fluent-bit^|.aws-otel-collector).*\" --collector.scheduled_task.whitelist=\"(/Microsoft/Windows/Location/Notifications^|/Microsoft/Windows/PushToInstall/LoginCheck).*\"start= auto
 ```

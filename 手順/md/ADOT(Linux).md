@@ -48,31 +48,34 @@ receivers:
   prometheus:
     config:
       global:
-        scrape_interval: 1m
+        scrape_interval: 15s
         scrape_timeout: 10s
       scrape_configs:
-      - job_name: "prometheus"
+      - job_name: "fluent-bit"
         static_configs:
-        # Exporterのポート番号を下記のように記載
         - targets: [ localhost:2021 ] # Fluent Bit
           labels:
-            server: 'solamame'        # サーバー名
+            server: 'solamame'        # サーバー名を入力
+      - job_name: "node-exporter"
+        static_configs:
         - targets: [ localhost:9100 ] # Node Exporter
           labels:
-            server: 'solamame'        # サーバー名
+            server: 'solamame'        # サーバー名を入力
+      - job_name: "apache-exporter"
+        static_configs:
         - targets: [ localhost:9117 ] # Apache Exporter
           labels:
-            server: 'solamame'        # サーバー名
+            server: 'solamame'        # サーバー名を入力
 processors:
   filter:
     metrics:
       include:
         match_type: strict
         metric_names:
-          - 取得したいメトリクス
-          -         〃
-          -         〃
-          -         〃
+          - # 取得したいメトリクス
+          - #       〃
+          - #       〃
+          - #       〃
 exporters:
   prometheusremotewrite:
     endpoint: # AWS Managed Prometheus(AMP)のエンドポイント - リモート書き込み URL

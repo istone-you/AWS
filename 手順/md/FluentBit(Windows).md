@@ -109,5 +109,5 @@
 
 完了したらコマンドプロンプトで下記コマンドを実行し、Fluent Bitをサービス登録します。
 ```
-C:¥>sc create fluent-bit binPath= "C:\Program Files\fluent-bit\bin\fluent-bit.exe -c C:\Program Files\fluent-bit\conf\fluent-bit.conf" start= auto
+C:¥>sc create  fluent-bit binPath= "\"C:\Program Files\fluent-bit\bin\fluent-bit.exe\" -c \"C:\Program Files\fluent-bit\conf\fluent-bit.conf\"" start= auto
 ```
