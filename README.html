@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+    <html  width="40%">
+    <head>
+        <meta charset="UTF-8">
+        <title>&ast;&ast;AWS&#x306e;&#x904b;&#x7528;&#x69cb;&#x6210;&ast;&ast;</title>
+        <style>
+    /* From extension vscode.github */
+    /*---------------------------------------------------------------------------------------------
+    *  Copyright (c) Microsoft Corporation. All rights reserved.
+    *  Licensed under the MIT License. See License.txt in the project root for license information.
+    *--------------------------------------------------------------------------------------------*/
+
+    .vscode-dark img[src$=\#gh-light-mode-only],
+    .vscode-light img[src$=\#gh-dark-mode-only] {
+        display: none;
+    }
+
+    </style>
+
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+    <style>
+                body {
+                    font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                    font-size: 14px;
+                    line-height: 1.6;
+                }
+            </style>
+            <style>
+    .task-list-item {
+        list-style-type: none;
+    }
+
+    .task-list-item-checkbox {
+        margin-left: -20px;
+        vertical-align: middle;
+        pointer-events: none;
+    }
+    </style>
+
+    </head>
+    <body class="vscode-body vscode-light">
+        <h1 id="awsの運用構成"><strong>AWSの運用構成</strong></h1>
+        <h2 id="全体図"><strong>全体図</strong></h2>
+        <img src="file:///c:\Users\ishii\Desktop\Folder\AWS\Diagram\構成まとめ\運用構成まとめ\AWS\image\監視運用.drawio.png" width="80%"/><br>
+        <font size="3">運用において使用しているAWSサービスの全体図です。
+        分かりづらいかと思うので、詳細な構成図とともに細かく分けて説明します。<br>
+        また、実際は監視されるアカウント（複数）と監視アカウントで分かれています。<a href="HP%E6%A1%88%E4%BB%B6/README.html">別の案件</a>で使用しているAWSアカウントの監視も行っています。<br>
+        手順は<a href="手順/README.html">こちら</a>に記載しています。<br></font>
+        <br><br>
+
+        <h2 id="oss"><strong>OSS</strong></h2>
+        <p>運用と監視において使用しているOSS(オープンソースソフトウェア)は以下の通りです。<br><br></p>
+        <table>
+        <thead>
+        <tr>
+        <th><img src="file:///c:\Users\ishii\Desktop\Folder\AWS\Diagram\構成まとめ\運用構成まとめ\AWS\image\Prometheus.png" width="60"/></th>
+        <th><img src="file:///c:\Users\ishii\Desktop\Folder\AWS\Diagram\構成まとめ\運用構成まとめ\AWS\image\Cortex.png" width="60" /></th>
+        <th><img src="file:///c:\Users\ishii\Desktop\Folder\AWS\Diagram\構成まとめ\運用構成まとめ\AWS\image\Grafana.png" width="60"/></th>
+        <th><img src="file:///c:\Users\ishii\Desktop\Folder\AWS\Diagram\構成まとめ\運用構成まとめ\AWS\image\OpenSearch.png" width="57"/></th>
+        <th><img src="file:///c:\Users\ishii\Desktop\Folder\AWS\Diagram\構成まとめ\運用構成まとめ\AWS\image\FluentBit.jpg" width="70"/></th>
+        <th><img src="file:///c:\Users\ishii\Desktop\Folder\AWS\Diagram\構成まとめ\運用構成まとめ\AWS\image\OpenTelemetry.png" width="60"/></th>
+        <th><img src="file:///c:\Users\ishii\Desktop\Folder\AWS\Diagram\構成まとめ\運用構成まとめ\AWS\image\Ansible.png" width="60"/></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+        <td><strong><a href="https://prometheus.io/docs/introduction/overview/">Prometheus</a></strong></td>
+        <td><strong><a href="https://cortexmetrics.io/docs/">Cortex</a></strong></td>
+        <td><strong><a href="https://grafana.com/docs/grafana/latest/">Grafana</a></strong></td>
+        <td><strong><a href="https://opensearch.org/docs/latest/">OpenSearch</a></strong></td>
+        <td><strong><a href="https://docs.fluentbit.io/manual/">FluentBit</a></strong></td>
+        <td><strong><a href="https://aws-otel.github.io/">OpenTelemetry</a></strong></td>
+        <td><strong><a href="https://docs.ansible.com/">Ansible</a></strong></td>
+        </tr>
+        </tbody>
+        </table>
+        <h2 id="awsマネージドサービスの利用"><strong>AWSマネージドサービスの利用</strong></h2>
+        <p>よく使われているOSSで監視の構築をすると、このような構成になりますが、<br>
+        <img src="file:///c:\Users\ishii\Desktop\Folder\AWS\Diagram\構成まとめ\運用構成まとめ\AWS\image\Observability.drawio.png" width="400" /><br></p>
+        <p>AWSのマネージドサービスを利用する事で、出来るだけ運用や管理が楽になるようにしています。<br>
+        <img src="file:///c:\Users\ishii\Desktop\Folder\AWS\Diagram\構成まとめ\運用構成まとめ\AWS\image\Observability(AWS).drawio.png" width="400" /><br></p>
+        <h3 id="grafanaによる可視化と一元化">Grafanaによる可視化と一元化</h3>
+        <p>監視項目によってツールやサービスが分かれていると面倒なので<code>Grafana</code>のダッシュボードで出来るだけすべてを監視できるようにしました。<br></p>
+        <p><img src="file:///c:\Users\ishii\Desktop\Folder\AWS\Diagram\構成まとめ\運用構成まとめ\AWS\image\Grafana.drawio.png" width="800"/><br>
+        <code>Prometheus</code>・<code>CloudWatch</code>・<code>Zabbix</code>からメトリクス、<br>
+        <code>OpenSearch</code>からログ(＋セキュリティ関連のログ)、<br>
+        <code>X-Ray</code>からトレース、<br>
+        <code>Athena</code>からコストデータとサーバー情報を可視化しています。<br><br>
+        本番アカウントと監視アカウントを分けると以下のようになります。<br>
+        <img src="file:///c:\Users\ishii\Desktop\Folder\AWS\Diagram\構成まとめ\運用構成まとめ\AWS\image\Grafanaアカウント別.drawio.png" width="800"/><br>
+        オンプレで使用している<code>Zabbix</code>に関しても、バージョンが古く扱いづらいため、<code>Grafana</code>で可視化できるようにしていますが、Amazonの<code>Grafana</code>ではなく、オンプレにて別途<code>Grafana</code>を構築して使用します。<br></p>
+        <h2 id="サーバー監視"><strong>サーバー監視</strong></h2>
+        <p>サーバーの監視においてはobservabilityの3本の柱である、メトリクス・ログ・トレースの3つの監視を行っています。<br></p>
+        <ul>
+        <li>メトリクスはPrometheus Exporterから取得したものを<code>OpenTelemetry</code>で<code>Prometheus</code>に送信し、<code>Grafana</code>で可視化してます。<br></li>
+        <li>ログは<code>Fluent Bit</code>から<code>S3</code>に送信。<br>
+        <code>S3</code>から<code>Lambda</code>を利用して成形後、<code>OpenSearch</code>に送信・可視化し、<code>Grafana</code>に一元化しています。<br>
+        ※ここで使用する<code>Lambda</code>は<a href="https://github.com/aws-samples/siem-on-amazon-opensearch-service">SIEM on Amazon OpenSearch Service</a>を使用しています。<br></li>
+        <li>トレースは<code>OpenTelemetry</code>のSDKをアプリに導入することで、アプリから取得できるようになり、<code>OpenTelemetry</code>にて<code>X-Ray</code>用のデータに成形後、<code>X-Ray</code>に送信・可視化し、<code>Grafana</code>に一元化しています。<br></li>
+        </ul>
+        <h3 id="siem-on-amazon-opensearch-serviceとは"><strong>SIEM on Amazon OpenSearch Serviceとは</strong></h3>
+        <p><img src="file:///c:\Users\ishii\Desktop\Folder\AWS\Diagram\構成まとめ\運用構成まとめ\AWS\image\siem-architecture.png" width="550"/><br></p>
+        <blockquote>
+        <p>SIEM は Security Information and Event Management の略で、セキュリティ機器、ネットワーク機器、その他のあらゆる機器のデータを収集及び一元管理をして、相関分析によって脅威検出とインシデントレスポンスをサポートするためのソリューションです。OpenSearch Service は、オープンソースの OpenSearch と OpenDashboards を大規模かつ簡単でコスト効率の良い方法を使用してデプロイ、保護、実行する完全マネージド型サービスです。OpenSearch Service の環境に SIEM として必要な機能を実装したのが SIEM on Amazon OpenSearch Service  です。</p>
+        </blockquote>
+        <p>※<a href="https://catalog.us-east-1.prod.workshops.aws/workshops/60a6ee4e-e32d-42f5-bd9b-4a2f7c135a72/ja-JP/01-introduction">SIEM on Amazon OpenSearch Service Workshop</a>より引用。</p>
+        <h3 id="ec2の監視">EC2の監視</h3>
+        <p><img src="file:///c:\Users\ishii\Desktop\Folder\AWS\Diagram\構成まとめ\運用構成まとめ\AWS\image\EC2監視.drawio.png" width="100%"/><br>
+        <img src="file:///c:\Users\ishii\Desktop\Folder\AWS\Diagram\構成まとめ\運用構成まとめ\AWS\image\Fluentdのメトリクス.drawio.png" width="32%"/><br><br>
+        <code>Fluent Bit</code>自体のメトリクスも<code>Prometheus</code>形式のメトリクスとして<code>Fluent Bit</code>から直接<code>OpenTelemetry</code>で収集しています。<br>
+        また<code>Fluent Bit</code>に<code>Node Exporter</code> <code>Windows Exporter</code>としての機能も搭載されているので、<code>Node Exporter</code>と<code>Windows Exporter</code>をインストールする必要はありません。<br><br></p>
+        <h3 id="ecsの監視">ECSの監視</h3>
+        <p><img src="file:///c:\Users\ishii\Desktop\Folder\AWS\Diagram\構成まとめ\運用構成まとめ\AWS\image\ECS監視.drawio.png" width="100%"/><br>
+        <code>ECS</code>では、<code>OpenTelemetry</code>がECSのエージェントからコンテナのメトリクスを取得します。<br>
+        <code>ECS</code>にてログドライバーの<code>FireLens</code>を使用しています。<br></p>
+        <h3 id="ec2ecs以外のawsサービスの監視">EC2・ECS以外のAWSサービスの監視</h3>
+        <p><img src="file:///c:\Users\ishii\Desktop\Folder\AWS\Diagram\構成まとめ\運用構成まとめ\AWS\image\その他AWSサービスの監視.drawio.png" width="650" /><br>
+        <code>CloudWatch</code>のメトリクスは監視アカウントの<code>Grafana</code>で監視してます。<br>
+        <code>CloudWatch</code>のログは<code>S3</code>と<code>OpenSearch</code>を経由して<code>Grafana</code>で監視してます。<br>
+        <code>Lambda</code>等のトレースも<code>X-Ray</code>で取得し、<code>CloudWatch</code>同様、監視アカウントの<code>Grafana</code>で監視します。<br></p>
+        <h2 id="webサーバー"><strong>Webサーバー</strong></h2>
+        <p>Webサーバーには<code>Apache HTTP Server</code>を使用し、構築からチューニングまで行いました。<br><br></p>
+        <table>
+        <thead>
+        <tr>
+        <th><img src="file:///c:\Users\ishii\Desktop\Folder\AWS\Diagram\構成まとめ\運用構成まとめ\AWS\image\apache.png" width="40" /></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+        <td><strong>Apache</strong></td>
+        </tr>
+        </tbody>
+        </table>
+        <h2 id="データベース"><strong>データベース</strong></h2>
+        <p>データベースは<code>PostgreSQL</code>と<code>MongoDB</code>を使用しています。<br><br></p>
+        <table>
+        <thead>
+        <tr>
+        <th><img src="file:///c:\Users\ishii\Desktop\Folder\AWS\Diagram\構成まとめ\運用構成まとめ\AWS\image\PostgreSQL.png" width="60" /></th>
+        <th><img src="file:///c:\Users\ishii\Desktop\Folder\AWS\Diagram\構成まとめ\運用構成まとめ\AWS\image\MongoDB.jpg" width="65" /></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+        <td><strong>PostgreSQL</strong></td>
+        <td><strong>MongoDB</strong></td>
+        </tr>
+        </tbody>
+        </table>
+        <h2 id="セキュリティ"><strong>セキュリティ</strong></h2>
+        <p>セキュリティにおいても様々なAWSサービスを使っており、それらのログを可視化して監視しています。<br><br>
+        <img src="file:///c:\Users\ishii\Desktop\Folder\AWS\Diagram\構成まとめ\運用構成まとめ\AWS\image\セキュリティ.drawio.png" width="100%"/><br></p>
+        <h3 id="セキュリティログの可視化">セキュリティログの可視化</h3>
+        <p><img src="file:///c:\Users\ishii\Desktop\Folder\AWS\Diagram\構成まとめ\運用構成まとめ\AWS\image\セキュリティログ.drawio.png" width="800"/><br>
+        セキュリティログは<code>OpenSearch</code>に集約・可視化、<code>Grafana</code>に一元化しています。<br></p>
+        <h2 id="ネットワーク"><strong>ネットワーク</strong></h2>
+        <p>ドメインのネームサーバーをさくらインターネットから<code>Route53</code>に移管しました。<br><br>
+        <img src="file:///c:\Users\ishii\Desktop\Folder\AWS\Diagram\構成まとめ\運用構成まとめ\AWS\image\ドメイン登録.drawio.png" width="300" /><br>
+        また、サブドメインの登録業務が多いため、ドメイン登録からレコードのバックアップ、ApacheのConfファイルの編集までを実行できるWindowsアプリを作成しました。
+        バックアップに関しては、AWSでは用意されていないので、こちらのアプリを使用しないと実行できません。<br></p>
+        <h3 id="ネットワークの可視化">ネットワークの可視化</h3>
+        <p>ネットワークサービスのメトリクスとログも可視化してます。<br>
+        <img src="file:///c:\Users\ishii\Desktop\Folder\AWS\Diagram\構成まとめ\運用構成まとめ\AWS\image\ネットワーク.drawio.png" width="700" /><br>
+        ネットワークに関するメトリクスは<code>CloudWatch</code>で可視化し、<code>Grafana</code>に一元化、<br>
+        ネットワークに関するログは<code>OpenSearch</code>に集約・可視化、<code>Grafana</code>に一元化しています。<br></p>
+        <h2 id="コスト管理"><strong>コスト管理</strong></h2>
+        <p><img src="file:///c:\Users\ishii\Desktop\Folder\AWS\Diagram\構成まとめ\運用構成まとめ\AWS\image\コスト管理.drawio.png" width="600" /><br>
+        <code>Budgets</code>と<code>Cost &amp; Usage Report</code>のデータは<code>Grafana</code>で可視化しています。<br></p>
+        <h2 id="アカウント管理"><strong>アカウント管理</strong></h2>
+        <p><code>IAM Identity Center</code>でログイン管理を行っています。<br>
+        <img src="file:///c:\Users\ishii\Desktop\Folder\AWS\Diagram\構成まとめ\運用構成まとめ\AWS\image\アカウント管理.drawio.png" width="500" /><br></p>
+        <h2 id="運用の自動化"><strong>運用の自動化</strong></h2>
+        <p>AWSの運用は<code>Lambda</code> <code>EventBridge</code> <code>SNS</code> <code>SystemsManager</code>等使って出来るだけ自動化させてます。<br></p>
+        <p><code>EventBridge</code>や<code>SNS</code>をトリガーにしてLambda関数を実行しています。<br>
+        <img src="file:///c:\Users\ishii\Desktop\Folder\AWS\Diagram\構成まとめ\運用構成まとめ\AWS\image\Lambda.drawio.png" width="250" /><br></p>
+        <p>様々なサービスから<code>SNS</code>にアラートを送信してます。<br>
+        <img src="file:///c:\Users\ishii\Desktop\Folder\AWS\Diagram\構成まとめ\運用構成まとめ\AWS\image\SNS.drawio.png" width="350" /><br></p>
+        <p>上記二つを組み合わせ、<code>Grafana</code>から<code>SNS</code>に送信されたアラートを元に<code>Lambda</code>を起動して、<code>Systems Manager Run Command</code>を実行することで、メトリクスやログをもとにインスタンスにコマンドを自動実行するようにしています。<br>
+        <img src="file:///c:\Users\ishii\Desktop\Folder\AWS\Diagram\構成まとめ\運用構成まとめ\AWS\image\RunCommand.drawio.png" width="400" /><br></p>
+        <p><code>EventBridge</code>を利用して、<code>Lambda</code>や<code>SystemsManager</code>のAutomation、Run Commandの実行、<code>SNS</code>を利用してのメール通知を行っています。<br>
+        <img src="file:///c:\Users\ishii\Desktop\Folder\AWS\Diagram\構成まとめ\運用構成まとめ\AWS\image\EventBridge.drawio.png" width="350" /><br></p>
+        <p>CloudWatchアラームをトリガーにインスタンスを自動でスケーリングしてます。<br>
+        <img src="file:///c:\Users\ishii\Desktop\Folder\AWS\Diagram\構成まとめ\運用構成まとめ\AWS\image\AutoScaling.drawio.png" width="550" /><br></p>
+        <p><code>Backup</code>を利用して様々なAWSサービスのバックアップのスケジュール管理やバックアップの保持期間の管理、バックアップに対するアクセスポリシーの設定を一元管理しています。<br>
+        <img src="file:///c:\Users\ishii\Desktop\Folder\AWS\Diagram\構成まとめ\運用構成まとめ\AWS\image\Backup.drawio.png" width="500" /><br></p>
+        <p><code>DevOps Guru</code>の機械学習を利用して<code>CloudWatch</code> <code>Config</code> <code>CLoudFormation</code> <code>X-Ray</code> <code>Systems Manager OpsCenter</code>の異常を検知しています。<br>
+        <img src="file:///c:\Users\ishii\Desktop\Folder\AWS\Diagram\構成まとめ\運用構成まとめ\AWS\image\DevOpsGuru.drawio.png" width="350" /><br></p>
+        <p>誰かがルールに反した操作を行った際は、<code>EventBridge</code>か<code>Config</code>で検知し、<code>Systems Manager Automation</code>を利用して自動修復をするようにしています。<br>
+        <img src="file:///c:\Users\ishii\Desktop\Folder\AWS\Diagram\構成まとめ\運用構成まとめ\AWS\image\Automation.drawio.png" width="250" /><br><br>
+        <code>Systems Manager Inventory</code>で取得できるサーバーのインベントリも<code>Glue</code>と<code>Athena</code>を利用して、<code>Grafana</code>で可視化をしてます。<br>
+        <img src="file:///c:\Users\ishii\Desktop\Folder\AWS\Diagram\構成まとめ\運用構成まとめ\AWS\image\インベントリ.drawio.png" width="600" /><br><br>
+        <code>Grafana</code>だけでなく、Systems Manager ExplorerでAWSにおける様々な情報を一元化したダッシュボードを利用しています。<br>
+        <img src="file:///c:\Users\ishii\Desktop\Folder\AWS\Diagram\構成まとめ\運用構成まとめ\AWS\image\Explorer.drawio.png" width="600" /><br><br></p>
+        <h2 id="構築"><strong>構築</strong></h2>
+        <p>AWS内のリソースは基本的に<code>CloudFormation(CFn)</code>で構築し、<code>CodeCommit</code>でバージョン管理しています。<br>
+        <code>CloudFormation(CFn)</code>を利用することで、AWSリソースをコードで管理できるので、現状を把握しやすくなりますし、<br>
+        <code>CodeCommit</code>を利用することで、変更差分がわかりやすく残るので、作業履歴として利用できます。<br>
+        さらに、<code>CodeBuild</code>と<code>CodePipline</code>を利用して、コミットから構築までを自動化させています。<br><br></p>
+        <p><img src="file:///c:\Users\ishii\Desktop\Folder\AWS\Diagram\構成まとめ\運用構成まとめ\AWS\image\構築.drawio.png" width="500" /><br></p>
+        <p><code>Lambda</code>の構築・デプロイには<code>SAM(Serverless Application Model)</code>を利用しています。<br></p>
+        <table>
+        <thead>
+        <tr>
+        <th><img src="file:///c:\Users\ishii\Desktop\Folder\AWS\Diagram\構成まとめ\運用構成まとめ\AWS\image\SAM.jpg" height="75" /></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+        <td><strong>SAM</strong></td>
+        </tr>
+        </tbody>
+        </table>
+
+
+
+    </body>
+    </html>
