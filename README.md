@@ -181,8 +181,8 @@ CloudWatchアラームをトリガーにインスタンスを自動でスケー�
 
 
 ## **構築**
-AWS内のリソースは基本的に`CloudFormation(CFn)`で構築し、`CodeCommit`でバージョン管理しています。<br>
-`CloudFormation(CFn)`を利用することで、AWSリソースをコードで管理できるので、現状を把握しやすくなりますし、<br>
+AWS内のリソースは基本的に`CloudFormation`で構築し、`CodeCommit`でバージョン管理しています。<br>
+`CloudFormation`を利用することで、AWSリソースをコードで管理できるので、現状を把握しやすくなりますし、<br>
 `CodeCommit`を利用することで、変更差分がわかりやすく残るので、作業履歴として利用できます。<br>
 さらに、`CodeBuild`と`CodePipline`を利用して、コミットから構築までを自動化させています。<br><br>
 
