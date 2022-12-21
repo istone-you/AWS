@@ -33,7 +33,7 @@ AWSのマネージドサービスを利用する事で、出来るだけ運用�
 `Athena`からコストデータとサーバー情報を可視化しています。<br><br>
 AWSの本番アカウントと監視アカウント、AWS外を分けると以下のようになります。<br>
 <img src="image/Grafanaアカウント別.drawio.png" width="800"/><br>
-一部ＡＷＳに移行しないサーバーがあるため、そちらの監視には元々監視で使用していた`Zabbix`を引き続き利用します。監視ツールが分かれていると面倒なため、`Zabbix`の内容も`Grafana`で確認できるようにしました。。<br>
+一部AWSに移行しないサーバーがあるため、そちらの監視には元々監視で使用していた`Zabbix`を引き続き利用します。監視ツールが分かれていると面倒なため、`Zabbix`の内容も`Grafana`で確認できるようにしました。。<br>
 
 
 ## **サーバー監視**
@@ -48,29 +48,34 @@ AWSの本番アカウントと監視アカウント、AWS外を分けると以�
 - トレースは`OpenTelemetry`のSDKをアプリに導入することで、アプリから取得できるようになり、`OpenTelemetry`にて`X-Ray`用のデータに成形後、`X-Ray`に送信、`Grafana`にて確認できるようにしています。<br>
 
 ### **SIEM on Amazon OpenSearch Serviceとは** ###
-<img src="image/siem-architecture.png" width="550"/><br>
 >SIEM は Security Information and Event Management の略で、セキュリティ機器、ネットワーク機器、その他のあらゆる機器のデータを収集及び一元管理をして、相関分析によって脅威検出とインシデントレスポンスをサポートするためのソリューションです。OpenSearch Service は、オープンソースの OpenSearch と OpenDashboards を大規模かつ簡単でコスト効率の良い方法を使用してデプロイ、保護、実行する完全マネージド型サービスです。OpenSearch Service の環境に SIEM として必要な機能を実装したのが SIEM on Amazon OpenSearch Service  です。
+
+<img src="image/siem-architecture.png" width="550"/><br>
 
 ※[SIEM on Amazon OpenSearch Service Workshop](https://catalog.us-east-1.prod.workshops.aws/workshops/60a6ee4e-e32d-42f5-bd9b-4a2f7c135a72/ja-JP/01-introduction)より引用。
 
 ### EC2の監視
+`OpenTelemetry`と`Fluentd`は集約用のサーバーを別途用意して利用しています。`Prometheus`のblackbox exporterを導入することで、各サーバーのヘルスチェックも行っています。<br>
+
 <img src="image/EC2監視.drawio.png" width="100%"/><br><br>
-`OpenTelemetry`と`Fluentd`は集約用のサーバーを別途用意して利用しています。`Prometheus`のblackbox exporterを導入することで、各サーバーのヘルスチェックも行っています。<br><br>
+
+
+`Fluent Bit`と`Fluentd`自体のメトリクスも`Prometheus`形式のメトリクスとして`Fluent Bit` `Fluentd`から直接`OpenTelemetry`で収集しています。<br>
+
 <img src="image/Fluentdのメトリクス.drawio.png" width="32%"/><br><br>
-`Fluent Bit`と`Fluentd`自体のメトリクスも`Prometheus`形式のメトリクスとして`Fluent Bit` `Fluentd`から直接`OpenTelemetry`で収集しています。<br><br>
 
 ### ECSの監視
-<img src="image/ECS監視.drawio.png" width="100%"/><br><br>
 `ECS`では、`OpenTelemetry`がECSのエージェントからコンテナのメトリクスを取得します。<br>
 `ECS`にてログドライバーの`FireLens`を使用しています。<br>
-`ADOT`が二つ存在していますが、片方はECSエージェントからコンテナメトリクスを取得する用で、片方はEC2の時と同じく集約用です。
+`ADOT`が二つ存在していますが、片方はECSエージェントからコンテナメトリクスを取得する用で、片方はEC2の時と同じく集約用です。<br><br>
+<img src="image/ECS監視.drawio.png" width="100%"/><br>
 
 ### EC2・ECS以外のAWSサービスの監視
-<img src="image/その他AWSサービスの監視.drawio.png" width="650" /><br><br>
 `CloudWatch`のメトリクスは監視アカウントの`Grafana`で監視してます。<br>
 `CloudWatch`のログは`S3`と`OpenSearch`を経由して`Grafana`で監視してます。<br>
-`Lambda`等のトレースも`X-Ray`で取得し、`CloudWatch`同様、監視アカウントの`Grafana`で監視します。<br><br>
+`Lambda`等のトレースも`X-Ray`で取得し、`CloudWatch`同様、監視アカウントの`Grafana`で監視します。<br>
 
+<img src="image/その他AWSサービスの監視.drawio.png" width="650" /><br><br>
 ## **アラート**
 
 監視する項目によって使用するサービスが分かれているため、アラートを通知するサービスもバラバラになっています。そのため、すべてのアラートを`Opsgenie`というサービスに一元化し、`Opsgenie`にてアラートの管理を行います。<br>
@@ -83,7 +88,8 @@ AWSの本番アカウントと監視アカウント、AWS外を分けると以�
 <img src="image/OpsGenie-AWS.drawio.png" width="450" /><br><br>
 
 `DevOps Guru`は機械学習を利用して`CloudWatch` `Config` `CLoudFormation` `X-Ray` `Systems Manager OpsCenter`の異常を検知しています。<br>
-<img src="image/DevOpsGuru.drawio.png" width="350" /><br><br>
+
+<img src="image/DevOpsGuru.drawio.png" width="450" /><br><br>
 
 またエラーログに対するアラートは出来るだけ早く通知したいのと、`Grafana`でのアラートが目的に合わなかったので、`Fluentd`からアラートを送信するようにしています。<br>
 また、用意されていた`Amazon SNS`に送信するプラグインも目的に合わなかったため、プラグインのコードを一部改修しました。<br>
@@ -107,21 +113,25 @@ Webサーバーには`Apache HTTP Server`を使用し、構築からチューニ
 
 ## **セキュリティ**
 セキュリティにおいても様々なAWSサービスを使っており、それらのログを可視化して監視しています。<br>
+
 <img src="image/セキュリティ.drawio.png" width="100%"/><br>
 
 ### セキュリティログの可視化
 セキュリティログは`OpenSearch`に集約・可視化、`Grafana`に一元化しています。<br>
+
 <img src="image/セキュリティログ.drawio.png" width="800"/><br>
 
 ## **ネットワーク**
 
 ドメインのネームサーバーをさくらインターネットから`Route53`に移管しました。<br><br>
-また、サブドメインの登録業務が多いため、ドメイン登録からレコードのバックアップ、ApacheのConfファイルの編集までを`Lambda`で自動化するようにしました。<br><br>
-<img src="image/ドメイン登録.drawio.png" width="550" /><br>
+また、サブドメインの登録業務が多いため、ドメイン登録からレコードのバックアップ、ApacheのConfファイルの編集までを`Lambda`で自動化するようにしました。<br>
+
+<img src="image/ドメイン登録.drawio.png" width="550" /><br><br>
 
 
 ### ネットワークの可視化
 ネットワークサービスのメトリクスとログも可視化してます。<br>
+
 <img src="image/ネットワーク.drawio.png" width="700" /><br>
 ネットワークに関するメトリクスは`CloudWatch`で可視化し、`Grafana`に一元化、<br>
 ネットワークに関するログは`OpenSearch`に集約・可視化、`Grafana`に一元化しています。<br>
@@ -129,10 +139,12 @@ Webサーバーには`Apache HTTP Server`を使用し、構築からチューニ
 ## **コスト管理**
 
 `Budgets`と`Cost & Usage Report`のデータは`Grafana`で可視化しています。<br>
+
 <img src="image/コスト管理.drawio.png" width="600" /><br>
 
 ## **アカウント管理**
 `IAM Identity Center`でログイン管理を行っています。<br>
+
 <img src="image/アカウント管理.drawio.png" width="500" /><br>
 
 
@@ -140,23 +152,30 @@ Webサーバーには`Apache HTTP Server`を使用し、構築からチューニ
 AWSの運用は`Lambda` `EventBridge` `SNS` `SystemsManager`等使って出来るだけ自動化させてます。<br>
 
 `EventBridge`や`SNS`をトリガーにしてLambda関数を実行しています。<br>
+
 <img src="image/Lambda.drawio.png" width="250" /><br>
 
 `OpsGenie`から`SNS`に送信されたアラートを元に`Lambda`を起動して、`Systems Manager Run Command`を実行することで、メトリクスやログをもとにインスタンスにコマンドを自動実行するようにしています。<br>
+
 <img src="image/RunCommand.drawio.png" width="400" /><br>
 
 `EventBridge`を利用して、`Lambda`や`SystemsManager`のAutomation、Run Commandの実行、`SNS`を利用してのメール通知を行っています。<br>
+
 <img src="image/EventBridge.drawio.png" width="350" /><br>
 
 CloudWatchアラームをトリガーにインスタンスを自動でスケーリングしてます。<br>
+
 <img src="image/AutoScaling.drawio.png" width="550" /><br>
 
 `Backup`を利用して様々なAWSサービスのバックアップのスケジュール管理やバックアップの保持期間の管理、バックアップに対するアクセスポリシーの設定を一元管理しています。<br>
+
 <img src="image/Backup.drawio.png" width="500" /><br>
 
 誰かがルールに反した操作を行った際は、`EventBridge`か`Config`で検知し、`Systems Manager Automation`を利用して自動修復をするようにしています。<br>
+
 <img src="image/Automation.drawio.png" width="250" /><br><br>
 `Systems Manager Inventory`で取得できるサーバーのインベントリも`Glue`と`Athena`を利用して、`Grafana`で可視化をしてます。<br>
+
 <img src="image/インベントリ.drawio.png" width="600" /><br><br>
 
 
@@ -166,7 +185,6 @@ AWS内のリソースは基本的に`CloudFormation(CFn)`で構築し、`CodeCom
 `CloudFormation(CFn)`を利用することで、AWSリソースをコードで管理できるので、現状を把握しやすくなりますし、<br>
 `CodeCommit`を利用することで、変更差分がわかりやすく残るので、作業履歴として利用できます。<br>
 さらに、`CodeBuild`と`CodePipline`を利用して、コミットから構築までを自動化させています。<br><br>
-
 
 <img src="image/CloudFormation.drawio.png" width="500" /><br>
 
