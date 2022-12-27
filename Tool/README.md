@@ -15,3 +15,7 @@
 また、`DynamoDB`の中身を表示することで、設定しているアラート内容を確認できるようにしています。<br>
 
 <img src="image/FluentdTool.drawio.png" width="850" /><br><br>
+
+`X-Ray`のSDKを導入したので、このようにトレース監視も行えます。<br>
+
+<img src="image/トレース.png" width="650" />
